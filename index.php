@@ -3,7 +3,7 @@
 session_start();
 
 if (isset($_GET['api'])) {
-    echo $_GET['api'];
+    require_once('api/api.php');
     exit;
 }
 
