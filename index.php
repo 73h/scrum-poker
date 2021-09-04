@@ -7,4 +7,4 @@ if (isset($_GET['api'])) {
     exit;
 }
 
-echo 'view 73';
+echo '42';
