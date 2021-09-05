@@ -7,4 +7,4 @@ if (isset($_GET['api'])) {
     exit;
 }
 
-echo '<img src="random.jpg" with="100">';
+echo '<img src="assets/images/sample.jpg" with="100">';
