@@ -3,8 +3,7 @@
 session_start();
 
 if (isset($_GET['api'])) {
-    require_once('../app/api.php');
-    exit;
+    require '../app/api.php';
+} else {
+    echo '<img src="assets/images/sample.jpg" with="100">';
 }
-
-echo '<img src="assets/images/sample.jpg" with="100">';

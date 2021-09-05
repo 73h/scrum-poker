@@ -1,2 +1,2 @@
 RewriteEngine on
-RewriteRule ^app\/(.*) index.php?app=$1
+RewriteRule ^api\/(.*) index.php?api=$1
