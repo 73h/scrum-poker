@@ -2,6 +2,11 @@
 
 use src\app\App;
 
-session_start();
-require '../autoload.php';
-new App();
+try {
+    session_start();
+    require '../autoload.php';
+    new App();
+} catch (Exception $e) {
+    echo 'Exception: ', $e->getMessage(), "\n";
+}
+
