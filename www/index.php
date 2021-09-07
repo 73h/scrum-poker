@@ -1,10 +1,7 @@
 <?php
 
-try {
-    session_start();
-    require '../autoload.php';
-    new \src\app\App();
-} catch (Exception $e) {
-    echo 'Exception: ', $e->getMessage(), "\n";
-}
+use src\app\App;
 
+session_start();
+require '../autoload.php';
+new App();
