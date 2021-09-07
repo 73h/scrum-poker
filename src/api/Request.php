@@ -2,8 +2,6 @@
 
 namespace src\api;
 
-use JetBrains\PhpStorm\NoReturn;
-
 class Request
 {
 
@@ -47,7 +45,7 @@ class Request
         }
     }
 
-    #[NoReturn] private function send_response(object|array|string|int|null $response): void
+    private function send_response(object|array|string|int|null $response): void
     {
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode(value: $response);
