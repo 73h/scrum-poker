@@ -2,7 +2,7 @@
 
 namespace src\app;
 
-use src\api\Request;
+use src\api\Api;
 
 class App
 {
@@ -10,8 +10,8 @@ class App
     function __construct()
     {
         if (isset($_GET['api'])) {
-            $api = new Request();
-            echo $api->handle_request();
+            $api = new Api();
+            $api->initialize_routes();
         } else {
             echo '<img src="assets/images/sample.jpg" with="100">';
         }

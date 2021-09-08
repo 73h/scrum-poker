@@ -6,64 +6,87 @@ class Request
 {
 
     private string $route;
-    private $data;
+    protected $data;
     private string $method;
 
     function __construct()
     {
         $this->route = $_GET['api'];
-        $this->data = json_decode(file_get_contents(filename: 'php://input'), associative: true);
         $this->method = $_SERVER['REQUEST_METHOD'];
+        $this->load_input_data();
     }
 
-    private function get(string $route, callable $callback): void
+    private function load_input_data()
     {
-        $this->route($route, 'GET', $callback);
+        $input_data = file_get_contents('php://input');
+        if ($input_data != '') {
+            $this->data = json_decode($input_data, true);
+            if (json_last_error() > 0)
+                $this->send_400(detail: json_last_error_msg());
+        }
     }
 
-    private function post(string $route, callable $callback): void
+    protected function get(string $route, callable $callback): void
     {
-        $this->route($route, 'POST', $callback);
+        if ($this->method == 'GET' && $this->data == null)
+            $this->route($route, 'GET', $callback);
+    }
+
+    protected function post(string $route, callable $callback): void
+    {
+        if ($this->method == 'POST') {
+            if ($this->data !== null)
+                $this->route($route, 'POST', $callback);
+            else
+                $this->send_400(detail: 'the post is empty');
+        }
     }
 
     private function route(string $route, string $method, callable $callback): void
     {
-        $route = str_replace(search: '/', replace: '\/', subject: $route);
-        preg_match_all(pattern: '/\<([a-z0-9_]+)\>/', subject: $route, matches: $matches_parameters, flags: PREG_PATTERN_ORDER);
-        $parameter_names = array_map(function ($parameter) {
-            return $parameter;
-        }, $matches_parameters[1]);
-        $pattern = '/' . preg_replace(pattern: '/\<[a-z0-9_]+\>/i', replacement: '([a-z0-9_-]*)', subject: $route) . '/i';
-        preg_match_all(pattern: $pattern, subject: $this->route, matches: $matches, flags: PREG_SET_ORDER);
+        $route = '^' . str_replace('/', '\/', $route) . '$';
+        $pattern = '/' . preg_replace('/\<[a-z_]+\>/i', '([a-z0-9]*)', $route) . '/i';
+        preg_match_all($pattern, $this->route, $matches, PREG_SET_ORDER);
         if (count($matches) > 0 && $this->method === $method) {
-            $parameters = (object)array();
-            for ($i = 1; $i < count($matches[0]); $i++) {
-                $key = $parameter_names[$i - 1];
-                $parameters->$key = $matches[0][$i];
-            }
-            $callback($parameters);
+            $parameters = array_filter($matches[0], function ($value, $key) {
+                if ($key > 0) return $value;
+            }, ARRAY_FILTER_USE_BOTH);
+            if ($this->data !== null)
+                array_push($parameters, $this->data);
+            call_user_func_array($callback, $parameters);
         }
     }
 
-    private function send_response(object|array|string|int|null $response): void
+
+    private function send_response(int $status_code, object|array|string|int|null $response): void
     {
         header('Content-Type: application/json; charset=utf-8');
-        echo json_encode(value: $response);
-        exit;
+        http_response_code($status_code);
+        exit(json_encode($response));
     }
 
-    public function handle_request(): string
+    protected function send_success(mixed $response): void
     {
-        $this->get(route: 'rooms/<room>/votes/<vote>', callback: function ($parameters) {
-            // handle route
-            $this->send_response($parameters);
-        });
-        $this->post(route: 'rooms', callback: function () {
-            // handle route
-            $this->send_response($this->data);
-        });
-        http_response_code(response_code: 404);
-        return "not found";
+        $this->send_response(200, $response);
+    }
+
+    protected function send_error(int $status_code, string $message, $detail = ''): void
+    {
+        $response = (object)array(
+            'title' => $message,
+            'detail' => $detail
+        );
+        $this->send_response($status_code, $response);
+    }
+
+    protected function send_404(string $message = 'Not Found', $detail = ''): void
+    {
+        $this->send_error(404, $message, $detail);
+    }
+
+    protected function send_400(string $message = 'Bad Request', $detail = ''): void
+    {
+        $this->send_error(400, $message, $detail);
     }
 
 }
