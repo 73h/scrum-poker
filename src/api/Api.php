@@ -2,21 +2,34 @@
 
 namespace src\api;
 
+use Exception;
+use src\api\exceptions\NotFoundException;
+
 class Api extends Request
 {
 
     public function initialize_routes(): void
     {
-        $this->get('rooms/<room>/votes/<vote>', function ($room, $vote) {
-            error_log(json_encode($room));
-            error_log(json_encode($vote));
-            $this->send_success(null);
-        });
-        $this->post('rooms', function ($data) {
-            error_log(json_encode($data));
-            $this->send_success(null);
-        });
-        $this->send_404();
+        try {
+
+            // get room
+            $this->get('rooms/<room>', function ($room_id) {
+                $poker = new Poker(room_id: $room_id);
+                $this->sendSuccess($poker->getRoomResponse());
+            });
+
+            // create room
+            $this->post('rooms', ['name'], function ($data) {
+                $poker = new Poker(owner: $data->name);
+                $this->sendCreated($poker->getRoomResponse());
+            });
+
+        } catch (NotFoundException $e) {
+            $this->sendNotFound(detail: $e->getMessage());
+        } catch (Exception $e) {
+            $this->sendInternalServerError(detail: $e->getMessage());
+        }
+        $this->sendNotFound();
     }
 
 }

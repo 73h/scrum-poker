@@ -13,16 +13,16 @@ class Request
     {
         $this->route = $_GET['api'];
         $this->method = $_SERVER['REQUEST_METHOD'];
-        $this->load_input_data();
+        $this->loadInputData();
     }
 
-    private function load_input_data()
+    private function loadInputData()
     {
         $input_data = file_get_contents('php://input');
         if ($input_data != '') {
-            $this->data = json_decode($input_data, true);
+            $this->data = json_decode($input_data, false);
             if (json_last_error() > 0)
-                $this->send_400(detail: json_last_error_msg());
+                $this->sendBadRequest(detail: json_last_error_msg());
         }
     }
 
@@ -32,13 +32,19 @@ class Request
             $this->route($route, 'GET', $callback);
     }
 
-    protected function post(string $route, callable $callback): void
+    protected function post(string $route, array $required_fields, callable $callback): void
     {
         if ($this->method == 'POST') {
-            if ($this->data !== null)
+            if ($this->data !== null) {
+                foreach ($required_fields as $required_field) {
+                    if (!property_exists($this->data, $required_field)) {
+                        $this->sendBadRequest(detail: $required_field . ' attribute is missing');
+                    }
+                }
                 $this->route($route, 'POST', $callback);
-            else
-                $this->send_400(detail: 'the post is empty');
+            } else {
+                $this->sendBadRequest(detail: 'post is empty');
+            }
         }
     }
 
@@ -58,35 +64,45 @@ class Request
     }
 
 
-    private function send_response(int $status_code, object|array|string|int|null $response): void
+    private function sendResponse(int $status_code, object|array|string|int|null $response): void
     {
         header('Content-Type: application/json; charset=utf-8');
         http_response_code($status_code);
         exit(json_encode($response));
     }
 
-    protected function send_success(mixed $response): void
+    protected function sendSuccess(mixed $response): void
     {
-        $this->send_response(200, $response);
+        $this->sendResponse(200, $response);
     }
 
-    protected function send_error(int $status_code, string $message, $detail = ''): void
+    protected function sendCreated(mixed $response): void
+    {
+        $this->sendResponse(201, $response);
+    }
+
+    protected function sendError(int $status_code, string $message, $detail = ''): void
     {
         $response = (object)array(
             'title' => $message,
             'detail' => $detail
         );
-        $this->send_response($status_code, $response);
+        $this->sendResponse($status_code, $response);
     }
 
-    protected function send_404(string $message = 'Not Found', $detail = ''): void
+    protected function sendNotFound(string $message = 'Not Found', $detail = ''): void
     {
-        $this->send_error(404, $message, $detail);
+        $this->sendError(404, $message, $detail);
     }
 
-    protected function send_400(string $message = 'Bad Request', $detail = ''): void
+    protected function sendBadRequest(string $message = 'Bad Request', $detail = ''): void
     {
-        $this->send_error(400, $message, $detail);
+        $this->sendError(400, $message, $detail);
+    }
+
+    protected function sendInternalServerError(string $message = 'Internal Server Error', $detail = ''): void
+    {
+        $this->sendError(500, $message, $detail);
     }
 
 }

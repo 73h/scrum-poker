@@ -475,3 +475,5 @@ composer.lock
 *.scss.map
 
 games/
+
+rooms/
