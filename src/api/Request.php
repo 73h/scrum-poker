@@ -6,13 +6,15 @@ class Request
 {
 
     private string $route;
-    protected $data;
+    protected ?\stdClass $data = null;
+    protected array $headers;
     private string $method;
 
     function __construct()
     {
         $this->route = $_GET['api'];
         $this->method = $_SERVER['REQUEST_METHOD'];
+        $this->headers = getallheaders();
         $this->loadInputData();
     }
 
@@ -63,7 +65,6 @@ class Request
         }
     }
 
-
     private function sendResponse(int $status_code, object|array|string|int|null $response): void
     {
         header('Content-Type: application/json; charset=utf-8');
@@ -100,9 +101,22 @@ class Request
         $this->sendError(400, $message, $detail);
     }
 
+    protected function sendForbidden(string $message = 'Forbidden', $detail = ''): void
+    {
+        $this->sendError(403, $message, $detail);
+    }
+
     protected function sendInternalServerError(string $message = 'Internal Server Error', $detail = ''): void
     {
         $this->sendError(500, $message, $detail);
+    }
+
+    protected function getHeader(string $key): ?string
+    {
+        if (array_key_exists($key, $this->headers)) {
+            return $this->headers[$key];
+        }
+        return null;
     }
 
 }

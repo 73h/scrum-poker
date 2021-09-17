@@ -2,6 +2,8 @@
 
 use src\app\App;
 
-session_start();
+require '../src/static/models.php';
+require '../src/static/helper.php';
 require '../autoload.php';
+
 new App();
