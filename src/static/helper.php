@@ -14,6 +14,7 @@ function getRandomString($length): string
 }
 
 if (!function_exists('getallheaders')) {
+    print_r('1');
     function getallheaders(): array
     {
         $headers = [];
@@ -22,6 +23,7 @@ if (!function_exists('getallheaders')) {
                 $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
             }
         }
+        print_r($headers);
         return $headers;
     }
 }

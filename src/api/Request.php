@@ -15,6 +15,7 @@ class Request
         $this->route = $_GET['api'];
         $this->method = $_SERVER['REQUEST_METHOD'];
         $this->headers = getallheaders();
+        print_r($this->headers);
         $this->loadInputData();
     }
 
