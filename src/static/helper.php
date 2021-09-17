@@ -12,18 +12,3 @@ function getRandomString($length): string
     }
     return $id;
 }
-
-if (!function_exists('getallheaders')) {
-    print_r('1');
-    function getallheaders(): array
-    {
-        $headers = [];
-        foreach ($_SERVER as $name => $value) {
-            if (str_starts_with($name, 'HTTP_')) {
-                $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
-            }
-        }
-        print_r($headers);
-        return $headers;
-    }
-}

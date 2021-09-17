@@ -14,8 +14,7 @@ class Request
     {
         $this->route = $_GET['api'];
         $this->method = $_SERVER['REQUEST_METHOD'];
-        $this->headers = getallheaders();
-        print_r($this->headers);
+        $this->headers = array_change_key_case(getallheaders(), CASE_LOWER);
         $this->loadInputData();
     }
 
