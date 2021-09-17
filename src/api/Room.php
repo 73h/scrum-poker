@@ -9,6 +9,7 @@ class Room
     public object $users;
     public string $token;
     public int $created;
+    public bool $locked = false;
     public ?string $password = null;
     public string $card_set = 'default';
 
@@ -38,14 +39,21 @@ class Room
 
     public function addUser(string $name): string
     {
-        $next_id = strval(count(get_object_vars($this->users)) + 1);
-        $this->users->{$next_id} = (object)array(
-            'name' => $name,
-            'token' => getRandomString(TOKEN_LENGTH),
-            'password' => null
-        );
-        if ($this->owner === null) $this->owner = $next_id;
-        return $next_id;
+        $users = array();
+        foreach (get_object_vars($this->users) as $key => $user) {
+            $users[$key] = $user->name;
+        }
+        $user_id = array_search($name, $users);
+        if (!$user_id) {
+            $user_id = strval(count(get_object_vars($this->users)) + 1);
+            $this->users->{$user_id} = (object)array(
+                'name' => $name,
+                'token' => getRandomString(TOKEN_LENGTH),
+                'password' => null
+            );
+            if ($this->owner === null) $this->owner = $user_id;
+        }
+        return $user_id;
     }
 
     public function getUsers(): object
@@ -55,6 +63,15 @@ class Room
             $users->{$key} = (object)array('name' => $user->name);
         }
         return $users;
+    }
+
+    public function getUserIdFromName(string $name): ?string
+    {
+        $users = array();
+        foreach (get_object_vars($this->users) as $key => $user) {
+            $users[$key] = $user->name;
+        }
+        return array_search($name, $users);
     }
 
 }

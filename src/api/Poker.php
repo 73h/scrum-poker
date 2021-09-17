@@ -3,6 +3,7 @@
 namespace src\api;
 
 use Exception;
+use src\api\exceptions\ForbiddenException;
 use src\api\exceptions\NotFoundException;
 
 class Poker
@@ -13,7 +14,7 @@ class Poker
     private Room $room;
     private string $room_id;
     private int $existing_room_id_counter = 0;
-    private string $user_id;
+    private string $current_user_id;
 
     function __construct(?string $room_id = null, ?string $owner = null)
     {
@@ -28,12 +29,12 @@ class Poker
         }
     }
 
-    private function getRoomPath()
+    private function getRoomPath(): string
     {
         return self::ROOM_PATH . $this->room_id . '.json';
     }
 
-    private function roomExists()
+    private function roomExists(): bool
     {
         $file_path = $this->getRoomPath();
         $room_exists = is_file($file_path);
@@ -68,19 +69,25 @@ class Poker
         file_put_contents($this->getRoomPath(), json_encode($this->room));
     }
 
-    private function createRoom(string $owner)
+    private function createRoom(string $owner, ?string $password = null)
     {
         $this->room = new Room();
-        $this->user_id = $this->room->addUser($owner);
+        $this->current_user_id = $this->room->addUser($owner);
+        if ($password !== null) $this->getCurrentUser()->password = $password;
         $this->generateRoomId();
         $this->saveRoom();
+    }
+
+    private function getCurrentUser(): object
+    {
+        return $this->room->users->{$this->current_user_id};
     }
 
     public function validateUserToken(string $token): bool
     {
         foreach (get_object_vars($this->room->users) as $key => $user) {
             if ($user->token == $token) {
-                $this->user_id = $key;
+                $this->current_user_id = $key;
                 return true;
             }
         }
@@ -92,13 +99,22 @@ class Poker
         return $this->room->token === $token;
     }
 
+    public function setUserPassword(string $password)
+    {
+        $this->getCurrentUser()->password = password_hash($password, PASSWORD_DEFAULT);
+        $this->saveRoom();
+    }
+
     public function enterRoom(string $name)
     {
-        if ($this->room->password !== null) {
-            // ToDo: Exception Raum gesperrt
-        } else {
-            $this->user_id = $this->room->addUser($name);
-            $this->saveRoom();
+        $this->current_user_id = $this->room->getUserIdFromName($name);
+        if (!$this->current_user_id) {
+            if ($this->room->locked) {
+                throw new ForbiddenException('room is locked, new users cannot enter');
+            } else {
+                $this->current_user_id = $this->room->addUser($name);
+                $this->saveRoom();
+            }
         }
     }
 
@@ -106,8 +122,8 @@ class Poker
     {
         return (object)array(
             'room' => $this->room_id,
-            'token' => $this->room->token . $this->room->users->{$this->user_id}->token,
-            'users_id' => $this->user_id,
+            'token' => $this->room->token . $this->getCurrentUser()->token,
+            'users_id' => $this->current_user_id,
             'users' => $this->room->getUsers()
         );
     }

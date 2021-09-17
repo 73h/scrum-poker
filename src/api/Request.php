@@ -34,23 +34,53 @@ class Request
             $this->route($route, 'GET', $callback);
     }
 
-    protected function post(string $route, array $required_fields, callable $callback): void
+    private function validatePostData(\stdClass $data, array $required_structure, string $nested_key = '')
+    {
+        foreach ($required_structure as $value) {
+            $temp_nested_key = $nested_key;
+            if ($value instanceof Structure) {
+                if (!property_exists($data, $value->name)) {
+                    if ($value->required) {
+                        $temp_nested_key .= $value->name;
+                        $this->sendBadRequest(detail: $temp_nested_key . ' attribute is missing');
+                    }
+                } else {
+                    if ($value->type == 'string' && $value->max_length !== null) {
+                        if (strlen($data->{$value->name}) > $value->max_length) {
+                            $temp_nested_key .= $value->name;
+                            $this->sendBadRequest(
+                                detail: 'field ' .
+                                $temp_nested_key .
+                                ' exceeds the number of ' .
+                                strval($value->max_length) .
+                                ' characters'
+                            );
+
+                        }
+                    }
+                }
+                if ($value->children !== null) {
+                    if (property_exists($data, $value->name)) {
+                        $temp_nested_key .= $value->name . ':';
+                        $this->validatePostData($data->{$value->name}, $value->children, $temp_nested_key);
+                    }
+                }
+            }
+        }
+    }
+
+    protected function post(string $route, callable $callback, array $required_structure): void
     {
         if ($this->method == 'POST') {
             if ($this->data !== null) {
-                foreach ($required_fields as $required_field) {
-                    if (!property_exists($this->data, $required_field)) {
-                        $this->sendBadRequest(detail: $required_field . ' attribute is missing');
-                    }
-                }
-                $this->route($route, 'POST', $callback);
+                $this->route($route, 'POST', $callback, $required_structure);
             } else {
                 $this->sendBadRequest(detail: 'post is empty');
             }
         }
     }
 
-    private function route(string $route, string $method, callable $callback): void
+    private function route(string $route, string $method, callable $callback, ?array $required_structure = null): void
     {
         $route = '^' . str_replace('/', '\/', $route) . '$';
         $pattern = '/' . preg_replace('/\<[a-z_]+\>/i', '([a-z0-9]*)', $route) . '/i';
@@ -59,8 +89,10 @@ class Request
             $parameters = array_filter($matches[0], function ($value, $key) {
                 if ($key > 0) return $value;
             }, ARRAY_FILTER_USE_BOTH);
-            if ($this->data !== null)
+            if ($this->data !== null) {
+                $this->validatePostData($this->data, $required_structure);
                 array_push($parameters, $this->data);
+            }
             call_user_func_array($callback, $parameters);
         }
     }
