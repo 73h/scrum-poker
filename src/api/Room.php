@@ -2,6 +2,8 @@
 
 namespace src\api;
 
+use Exception;
+
 class Room
 {
 
@@ -13,6 +15,9 @@ class Room
     public ?string $password = null;
     public string $card_set = 'default';
 
+    /**
+     * @throws Exception
+     */
     public function __construct(?array $load = null)
     {
         $this->created = time();
@@ -37,6 +42,9 @@ class Room
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function addUser(string $name): string
     {
         $users = array();

@@ -9,32 +9,6 @@ use src\api\exceptions\NotFoundException;
 class Api extends Request
 {
 
-    private ?string $token = null;
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->token = $this->getHeader('token');
-    }
-
-    private function tokenExists()
-    {
-        if ($this->token == null) {
-            $this->sendBadRequest(detail: 'token header is missing');
-        }
-    }
-
-    private function validateToken(Poker $poker)
-    {
-        $this->tokenExists();
-        $token_set = str_split($this->token, strlen($this->token) / 2);
-        $room_token = $token_set[0];
-        $user_token = $token_set[1];
-        if (!$poker->validateRoomToken($room_token) || !$poker->validateUserToken($user_token)) {
-            $this->sendForbidden(detail: 'token is invalid');
-        }
-    }
-
     public function initialize_routes(): void
     {
         try {
@@ -49,18 +23,17 @@ class Api extends Request
             // enter room
             $this->post('rooms/<room>/users', function ($room_id, $data) {
                 $poker = new Poker(room_id: $room_id);
-                $poker->enterRoom($data->name);
-                if (property_exists($data, 'password')) $poker->setUserPassword($data->password);
+                $password = property_exists($data, 'password') ? $data->password : null;
+                $poker->enterRoom($data->name, $password);
                 $this->sendCreated($poker->getRoomResponse());
             }, Structures::rooms_users());
 
             // get room
-            $this->get('rooms/<room>', function ($room_id) {
-                $this->tokenExists();
+            $this->get('rooms/<room>', function ($room_id, $headers) {
                 $poker = new Poker(room_id: $room_id);
-                $this->validateToken($poker);
+                $poker->validateToken($headers->token);
                 $this->sendSuccess($poker->getRoomResponse());
-            });
+            }, ['token']);
 
         } catch (NotFoundException $e) {
             $this->sendNotFound(detail: $e->getMessage());

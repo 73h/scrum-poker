@@ -16,6 +16,10 @@ class Poker
     private int $existing_room_id_counter = 0;
     private string $current_user_id;
 
+    /**
+     * @throws NotFoundException
+     * @throws Exception
+     */
     function __construct(?string $room_id = null, ?string $owner = null)
     {
         if (!is_dir(self::ROOM_PATH)) {
@@ -42,6 +46,9 @@ class Poker
         return $room_exists;
     }
 
+    /**
+     * @throws Exception
+     */
     private function generateRoomId()
     {
         $this->room_id = getRandomString(self::ROOM_ID_LENGTH);
@@ -55,6 +62,10 @@ class Poker
         }
     }
 
+    /**
+     * @throws NotFoundException
+     * @throws Exception
+     */
     private function loadRoom()
     {
         if (!$this->roomExists()) {
@@ -69,6 +80,9 @@ class Poker
         file_put_contents($this->getRoomPath(), json_encode($this->room));
     }
 
+    /**
+     * @throws Exception
+     */
     private function createRoom(string $owner, ?string $password = null)
     {
         $this->room = new Room();
@@ -105,7 +119,11 @@ class Poker
         $this->saveRoom();
     }
 
-    public function enterRoom(string $name)
+    /**
+     * @throws ForbiddenException
+     * @throws Exception
+     */
+    public function enterRoom(string $name, ?string $password = null)
     {
         $this->current_user_id = $this->room->getUserIdFromName($name);
         if (!$this->current_user_id) {
@@ -113,8 +131,15 @@ class Poker
                 throw new ForbiddenException('room is locked, new users cannot enter');
             } else {
                 $this->current_user_id = $this->room->addUser($name);
+                if ($password !== null) $this->setUserPassword($password);
                 $this->saveRoom();
             }
+        } else {
+            if ($this->getCurrentUser()->password !== null &&
+                !password_verify($password, $this->getCurrentUser()->password)) {
+                throw new ForbiddenException('incorect password');
+            }
+
         }
     }
 
@@ -126,6 +151,19 @@ class Poker
             'users_id' => $this->current_user_id,
             'users' => $this->room->getUsers()
         );
+    }
+
+    /**
+     * @throws ForbiddenException
+     */
+    public function validateToken(string $token)
+    {
+        $token_set = str_split($token, strlen($token) / 2);
+        $room_token = $token_set[0];
+        $user_token = $token_set[1];
+        if (!$this->validateRoomToken($room_token) || !$this->validateUserToken($user_token)) {
+            throw new ForbiddenException('token is invalid');
+        }
     }
 
 }

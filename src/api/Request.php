@@ -15,10 +15,10 @@ class Request
         $this->route = $_GET['api'];
         $this->method = $_SERVER['REQUEST_METHOD'];
         $this->headers = array_change_key_case(getallheaders(), CASE_LOWER);
-        $this->loadInputData();
+        $this->loadPayload();
     }
 
-    private function loadInputData()
+    private function loadPayload()
     {
         $input_data = file_get_contents('php://input');
         if ($input_data != '') {
@@ -28,13 +28,15 @@ class Request
         }
     }
 
-    protected function get(string $route, callable $callback): void
+    private function getHeader(string $key): ?string
     {
-        if ($this->method == 'GET' && $this->data == null)
-            $this->route($route, 'GET', $callback);
+        if (array_key_exists($key, $this->headers)) {
+            return $this->headers[$key];
+        }
+        return null;
     }
 
-    private function validatePostData(\stdClass $data, array $required_structure, string $nested_key = '')
+    private function validatePayload(\stdClass $data, array $required_structure, string $nested_key = '')
     {
         foreach ($required_structure as $value) {
             $temp_nested_key = $nested_key;
@@ -62,25 +64,31 @@ class Request
                 if ($value->children !== null) {
                     if (property_exists($data, $value->name)) {
                         $temp_nested_key .= $value->name . ':';
-                        $this->validatePostData($data->{$value->name}, $value->children, $temp_nested_key);
+                        $this->validatePayload($data->{$value->name}, $value->children, $temp_nested_key);
                     }
                 }
             }
         }
     }
 
-    protected function post(string $route, callable $callback, array $required_structure): void
+    protected function get(string $route, callable $callback, ?array $required_headers = null): void
+    {
+        if ($this->method == 'GET' && $this->data == null)
+            $this->route($route, 'GET', $callback, required_headers: $required_headers);
+    }
+
+    protected function post(string $route, callable $callback, array $payload_structure, ?array $required_headers = null): void
     {
         if ($this->method == 'POST') {
             if ($this->data !== null) {
-                $this->route($route, 'POST', $callback, $required_structure);
+                $this->route($route, 'POST', $callback, $payload_structure, $required_headers);
             } else {
                 $this->sendBadRequest(detail: 'post is empty');
             }
         }
     }
 
-    private function route(string $route, string $method, callable $callback, ?array $required_structure = null): void
+    private function route(string $route, string $method, callable $callback, ?array $payload_structure = null, ?array $required_headers = null): void
     {
         $route = '^' . str_replace('/', '\/', $route) . '$';
         $pattern = '/' . preg_replace('/\<[a-z_]+\>/i', '([a-z0-9]*)', $route) . '/i';
@@ -89,9 +97,18 @@ class Request
             $parameters = array_filter($matches[0], function ($value, $key) {
                 if ($key > 0) return $value;
             }, ARRAY_FILTER_USE_BOTH);
-            if ($this->data !== null) {
-                $this->validatePostData($this->data, $required_structure);
+            if ($payload_structure !== null) {
+                $this->validatePayload($this->data, $payload_structure);
                 array_push($parameters, $this->data);
+            }
+            if ($required_headers !== null) {
+                $headers = (object)array();
+                foreach ($required_headers as $required_header) {
+                    $header = $this->getHeader($required_header);
+                    if ($header === null) $this->sendBadRequest(detail: $required_header . ' header is missing');
+                    $headers->$required_header = $header;
+                }
+                array_push($parameters, $headers);
             }
             call_user_func_array($callback, $parameters);
         }
@@ -141,14 +158,6 @@ class Request
     protected function sendInternalServerError(string $message = 'Internal Server Error', $detail = ''): void
     {
         $this->sendError(500, $message, $detail);
-    }
-
-    protected function getHeader(string $key): ?string
-    {
-        if (array_key_exists($key, $this->headers)) {
-            return $this->headers[$key];
-        }
-        return null;
     }
 
 }

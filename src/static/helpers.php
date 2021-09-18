@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @throws Exception
+ */
 function getRandomString($length): string
 {
     $id = '';
