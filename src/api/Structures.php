@@ -5,7 +5,7 @@ namespace src\api;
 class Structures
 {
 
-    public static function rooms(): array
+    public static function rooms_users(): array
     {
         return [
             new Structure('user', required: true, children: [
@@ -19,12 +19,23 @@ class Structures
         ];
     }
 
-    public static function rooms_users(): array
+    public static function vote(): array
     {
         return [
-            new Structure('name', required: true, max_length: 20),
-            new Structure('password')
+            new Structure('card', required: true),
         ];
+    }
+
+    public static function vote_patch(): array
+    {
+        return [
+            new Structure('task', required: true),
+        ];
+    }
+
+    public static function empty(): array
+    {
+        return [];
     }
 
 }

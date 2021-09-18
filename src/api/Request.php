@@ -18,7 +18,7 @@ class Request
         $this->loadPayload();
     }
 
-    private function loadPayload()
+    private function loadPayload(): void
     {
         $input_data = file_get_contents('php://input');
         if ($input_data != '') {
@@ -36,7 +36,7 @@ class Request
         return null;
     }
 
-    private function validatePayload(\stdClass $data, array $required_structure, string $nested_key = '')
+    private function validatePayload(\stdClass $data, array $required_structure, string $nested_key = ''): void
     {
         foreach ($required_structure as $value) {
             $temp_nested_key = $nested_key;
@@ -83,7 +83,18 @@ class Request
             if ($this->data !== null) {
                 $this->route($route, 'POST', $callback, $payload_structure, $required_headers);
             } else {
-                $this->sendBadRequest(detail: 'post is empty');
+                $this->sendBadRequest(detail: 'payload is empty');
+            }
+        }
+    }
+
+    protected function patch(string $route, callable $callback, array $payload_structure, ?array $required_headers = null): void
+    {
+        if ($this->method == 'PATCH') {
+            if (count($payload_structure) > 0 && $this->data === null) {
+                $this->sendBadRequest(detail: 'payload is empty');
+            } else {
+                $this->route($route, 'PATCH', $callback, $payload_structure, $required_headers);
             }
         }
     }
@@ -98,7 +109,9 @@ class Request
                 if ($key > 0) return $value;
             }, ARRAY_FILTER_USE_BOTH);
             if ($payload_structure !== null) {
-                $this->validatePayload($this->data, $payload_structure);
+                if (count($payload_structure) > 0) {
+                    $this->validatePayload($this->data, $payload_structure);
+                }
                 array_push($parameters, $this->data);
             }
             if ($required_headers !== null) {
@@ -119,6 +132,14 @@ class Request
         header('Content-Type: application/json; charset=utf-8');
         http_response_code($status_code);
         exit(json_encode($response));
+    }
+
+    protected function sendOk(string $message): void
+    {
+        $this->sendResponse(200, (object)array(
+            'title' => 'Ok',
+            'detail' => $message
+        ));
     }
 
     protected function sendSuccess(mixed $response): void
