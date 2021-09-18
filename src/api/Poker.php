@@ -243,33 +243,36 @@ class Poker
     public function getRoomResponse(): object
     {
         $current_vote = $this->room->getCurrentVote();
-        $user_voted = array_map(function ($key) {
-            return strval($key);
-        }, array_keys(get_object_vars($current_vote->votes)));
-        $votes = null;
-        if ($current_vote->revealed !== null) {
-            $votes = (object)array();
-            foreach ($current_vote->votes as $user_id => $vote) {
-                $voted = (new DateTime)->setTimestamp($vote->voted)->format(DATE_ATOM);
-                $votes->{$user_id} = (object)array(
-                    'card' => $vote->card,
-                    'voted' => $voted
-                );
+        $current_vote_response = null;
+        if ($current_vote !== null) {
+            $user_voted = array_map(function ($key) {
+                return strval($key);
+            }, array_keys(get_object_vars($current_vote->votes)));
+            $votes = null;
+            if ($current_vote->revealed !== null) {
+                $votes = (object)array();
+                foreach ($current_vote->votes as $user_id => $vote) {
+                    $voted = (new DateTime)->setTimestamp($vote->voted)->format(DATE_ATOM);
+                    $votes->{$user_id} = (object)array(
+                        'card' => $vote->card,
+                        'voted' => $voted
+                    );
+                }
             }
+            // $started = (new DateTime('now', new DateTimeZone('Europe/Berlin')))->setTimestamp($current_vote->started);
+            $started = (new DateTime)->setTimestamp($current_vote->started)->format(DATE_ATOM);
+            $revealed = null;
+            if (($current_vote->revealed !== null)) {
+                $revealed = (new DateTime)->setTimestamp($current_vote->revealed)->format(DATE_ATOM);
+            }
+            $current_vote_response = (object)array(
+                'key' => $this->room->getCurrentVoteKey(),
+                'revealed' => $revealed,
+                'started' => $started,
+                'votes' => $votes,
+                'user_voted' => $user_voted
+            );
         }
-        // $started = (new DateTime('now', new DateTimeZone('Europe/Berlin')))->setTimestamp($current_vote->started);
-        $started = (new DateTime)->setTimestamp($current_vote->started)->format(DATE_ATOM);
-        $revealed = null;
-        if (($current_vote->revealed !== null)) {
-            $revealed = (new DateTime)->setTimestamp($current_vote->revealed)->format(DATE_ATOM);
-        }
-        $current_vote_response = (object)array(
-            'key' => $this->room->getCurrentVoteKey(),
-            'revealed' => $revealed,
-            'started' => $started,
-            'votes' => $votes,
-            'user_voted' => $user_voted
-        );
         return (object)array(
             'room' => $this->room_id,
             'token' => $this->room->token . $this->getCurrentUser()->token,
