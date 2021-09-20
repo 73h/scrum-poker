@@ -58,8 +58,11 @@ body.dark-theme .scheme-toogle .light {
 
 }
 
-body {
+body, input {
     background: var(--bkg-color);
+}
+
+body {
     margin: 1em 2em;
 }
 
@@ -79,4 +82,28 @@ body {
 .scheme-toogle {
     float: right;
     cursor: pointer;
+}
+
+h1 {
+    margin-bottom: 0.2em;
+}
+
+h2 {
+    font-size: 1em;
+    margin-top: 0;
+}
+
+label {
+    font-size: 1.5em;
+}
+
+input {
+    font-size: 1.2em;
+    padding: .5em;
+    margin-top: 0.5em;
+    border: dotted 1px var(--text-color);
+}
+
+.main {
+    margin: 2em 0;
 }
