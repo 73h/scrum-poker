@@ -4,7 +4,7 @@ namespace src\api;
 
 use Exception;
 
-class Session
+class PokerSession
 {
 
     public ?string $owner = null;
