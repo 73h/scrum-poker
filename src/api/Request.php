@@ -73,29 +73,22 @@ class Request
 
     protected function get(string $route, callable $callback, ?array $required_headers = null): void
     {
-        if ($this->method == 'GET' && $this->data == null)
+        if ($this->method == 'GET' && $this->data == null) {
             $this->route($route, 'GET', $callback, required_headers: $required_headers);
+        }
     }
 
     protected function post(string $route, callable $callback, array $payload_structure, ?array $required_headers = null): void
     {
         if ($this->method == 'POST') {
-            if ($this->data !== null) {
-                $this->route($route, 'POST', $callback, $payload_structure, $required_headers);
-            } else {
-                $this->sendBadRequest(detail: 'payload is empty');
-            }
+            $this->route($route, 'POST', $callback, $payload_structure, $required_headers);
         }
     }
 
     protected function patch(string $route, callable $callback, array $payload_structure, ?array $required_headers = null): void
     {
         if ($this->method == 'PATCH') {
-            if (count($payload_structure) > 0 && $this->data === null) {
-                $this->sendBadRequest(detail: 'payload is empty');
-            } else {
-                $this->route($route, 'PATCH', $callback, $payload_structure, $required_headers);
-            }
+            $this->route($route, 'PATCH', $callback, $payload_structure, $required_headers);
         }
     }
 
@@ -105,6 +98,9 @@ class Request
         $pattern = '/' . preg_replace('/\<[a-z_]+\>/i', '([a-z0-9]*)', $route) . '/i';
         preg_match_all($pattern, $this->route, $matches, PREG_SET_ORDER);
         if (count($matches) > 0 && $this->method === $method) {
+            if ($payload_structure !== null && count($payload_structure) > 0 && $this->data === null) {
+                $this->sendBadRequest(detail: 'payload is empty');
+            }
             $parameters = array_filter($matches[0], function ($value, $key) {
                 if ($key > 0) return $value;
             }, ARRAY_FILTER_USE_BOTH);

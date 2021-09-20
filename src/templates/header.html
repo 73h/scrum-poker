@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xml:lang="en" lang="en">
+<head>
+    <title>{{title}}</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="title" content="{{title}}"/>
+    <meta name="description" content="{{description}}"/>
+    <meta name="robots" content="index, follow"/>
+    <meta name="author" content="{{author}}"/>
+    <meta name="date" content="{{date}}"/>
+    <meta name="language" content="en"/>
+    <meta name="rights" lang="en" content="all rights reserved by the author"/>
+    <meta name="keywords" content="{{keywords}}"/>
+    <meta property="og:title" content="{{title}}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{url}}">
+    <meta property="og:description" content="{{description}}">
+    <meta property="og:image" content="/assets/images/poker.png">
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <!--<meta name="color-scheme" content="dark light">-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
+    <link href="https://fonts.googleapis.com/css?family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="/assets/styles/main.css" media="all"/>
+</head>
+<body>
+<header>
+    <div class="scheme-toogle">
+        <img class="dark"
+             src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAABmJLR0QA/wD/AP+gvaeTAAACm0lEQVRoge3Yz6tVVRQH8LWfUpk2CgrlkU8HEY2qiaSiIA4KkSBpIjQpif4HIWrSoEFh9F8ENhONMH9UEIYYRBg0Mp+VUElYYFGfBm/dOD2v9553zznvvPB8J5d793et9V137734nhMxYMCAAXcNcBYX+tbRGBJ964iImFtpAAouVRvIfs63K21lWHEjEVEi4u8xv6+JnZkJa+lorW8Y/0n8n3firgR24jWcwnXs7ltTbeRkexEX3Y75vvXVArbjTEX4HziBv/L7hr41TgX24tcU/BvexIO5Nvr9gb51TgT2p3j4HAvL1r/JtUf7EFfLS2EBv6TQ93HPGM7pXH+mG7Xjhf1rQ6bZD6zDZ8n7cFwTyXsjOe92p/z2onPLJs65CdzDybmOhyfwnkreFazrRvmdi5+f0sQcvkqBL0/JVXA5uS+1r7YB8HQKW7zTkVrGP5T877BpNTTWQuXcv12TX/BpxnyAWdx3+8ipBgdWELOQ9wneWRPN4NsUtDCd/Z+4PbhV2Zl+jxluppj7Z4jdhR8y/ipeQdPHitmgoe3AtsqdGY3m9/AsHsMmbMA8dqO03cNISGPbkQPgeXxtMn6clKfpRVvMz+2zJiilKKUcL6U8HhFPRsTrEXE6Ii5HxM0K9dLMKqfBKtgOnMwaR7uq0bntwEP4M2vsaDt/tVCntgNvZe7u32bqyHZYetL8PXMfbivvpIKt2w7chy8y50edjd0xhVuzHbg3/xC4ga1taq0joLHtwObcAZZcQz+vjrKZ0c5cxZE60yyP0qv4KWN/xr7V0DxJVB3bsTEv80Ecw/cV/jk80msTI6hvO6r4Ei/Mer86nwZ4IiKei4g9EbElIuaz7rVYsjgfR8TJiLhQShleiA8YMGDAgAFN8A80XOjgXd8DUwAAAABJRU5ErkJggg==">
+        <img class="light"
+             src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAABmJLR0QA/wD/AP+gvaeTAAACm0lEQVRoge2Zz2sTURDHP+YHxhIplkY8qHdj/wUVFUUQrEr9I9qi4Em8iCe961E86T+i9aQSGytV48Wb6EW0qK3SxMPMsiE/tp197+3msB94bLLJzHxn897k7SwUFBTkzTPgVd4ifNDTEZRS6ABZUSQyaVgSmQFqoYSMoAoc8O10BvgFtIGG0TbNYm8Ab4AfwLTRNpG9wKoKeostmRXgueH7DY3R05hVg605wHvgkO8AAzHWA8UYCuQ7mcySGBVwFT8FoEb6qetEQwP/HhG0BJwEHiDbky/AV339EDjBcLU8CPxRn5klEVEDZgfOnQJaxJVq3GghyfYzS7blfSy3gS4itA3cAJrAlI6mnoumZRe4lYvSBO4i4jaBRZL/aEvAErClNneCq9slF5GruwmcNtidQZLZBi4E0GWiAnxEruxiCvtl4lJe8ajLzAJxyUyzAS0Da+rjqosQ193vFT0+QqaXlW3gsb6ed9TiRAe5msccfBxXHx+8KFLqwGfG1/+Vge9v6Pm6Q8z96uOngw7z1Brcjkfv9xj9uOK9BxBVrKaDjzk8TC3Xxf5aj+ccfJzX40tHLU5cQ67mGlJKrZSBd+pjwaMuM1XgkwpZSmF/XW07BLgTtHIZEbOFbDt2y1m16QKXAuhKxX3iZJZJnmZl5JeINo33gqszUCJOpofM+5tIRarrmNNz0ZroIknk3lurIPcZ/cwT/9snjQ7D02maHNZJA7nL+8bwXV0VqUBPkV3tho514Il+Nii4Dnwn41vd/uZDCz/b7yrSkMus+RCyZZNF32woUKi+U/BkppCGQpqf3vrEqj+ZNrDPYLsjR4B/ZNvEbgN/gcNG2x05Srq+U9pHbzWNOTEUzxAtFIlMGlk0xV6QwRopKChI5j9Xp8ehJa4uuwAAAABJRU5ErkJggg=="/>
+    </div>
+    <h1>{{title}}</h1>
+    <h2>for scrum teams.</h2>
+</header>

@@ -4,7 +4,7 @@ namespace src\api;
 
 use Exception;
 
-class Room
+class Session
 {
 
     public ?string $owner = null;
@@ -23,7 +23,7 @@ class Room
     {
         $this->created = time();
         $this->users = (object)array();
-        $this->token = getRandomString(TOKEN_LENGTH);
+        $this->token = getRandomString(16);
         $this->votes = (object)array();
         if ($load !== null) {
             $this->load($this, $load);
@@ -63,7 +63,7 @@ class Room
             $user_id = strval(count(get_object_vars($this->users)) + 1);
             $this->users->{$user_id} = (object)array(
                 'name' => $name,
-                'token' => getRandomString(TOKEN_LENGTH),
+                'token' => getRandomString(16),
                 'password' => null
             );
             if ($this->owner === null) $this->owner = $user_id;

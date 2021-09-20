@@ -1,0 +1,82 @@
+:root {
+    color-scheme: light dark;
+}
+
+body {
+    --text-color: #222;
+    --bkg-color: #fff;
+}
+
+body.dark-theme {
+    --text-color: #eee;
+    --bkg-color: #121212;
+}
+
+.scheme-toogle .light {
+    --toogle-light-img: block;
+}
+
+.scheme-toogle .dark {
+    --toogle-dark-img: none;
+}
+
+body.dark-theme .scheme-toogle .dark {
+    --toogle-dark-img: block;
+}
+
+body.dark-theme .scheme-toogle .light {
+    --toogle-light-img: none;
+}
+
+@media (prefers-color-scheme: dark) {
+
+    body {
+        --text-color: #eee;
+        --bkg-color: #121212;
+    }
+
+    body.light-theme {
+        --text-color: #222;
+        --bkg-color: #fff;
+    }
+
+    .scheme-toogle .light {
+        --toogle-light-img: none;
+    }
+
+    .scheme-toogle .dark {
+        --toogle-dark-img: block;
+    }
+
+    body.light-theme .scheme-toogle .dark {
+        --toogle-dark-img: none;
+    }
+
+    body.light-theme .scheme-toogle .light {
+        --toogle-light-img: block;
+    }
+
+}
+
+body {
+    background: var(--bkg-color);
+    margin: 1em 2em;
+}
+
+* {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--text-color);
+}
+
+.scheme-toogle .light {
+    display: var(--toogle-light-img);
+}
+
+.scheme-toogle .dark {
+    display: var(--toogle-dark-img);
+}
+
+.scheme-toogle {
+    float: right;
+    cursor: pointer;
+}

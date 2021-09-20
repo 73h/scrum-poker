@@ -3,6 +3,7 @@
 namespace src\app;
 
 use src\api\Api;
+use src\views\Index;
 
 class App
 {
@@ -13,7 +14,14 @@ class App
             $api = new Api();
             $api->initialize_routes();
         } else {
-            echo '<img src="assets/images/sample.jpg" with="100">';
+            $site = $_GET['site'] ?? 'index';
+            switch ($site) {
+                case 'index':
+                    new Index();
+                    break;
+                default:
+                    http_response_code(404);
+            }
         }
     }
 

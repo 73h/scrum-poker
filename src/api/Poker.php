@@ -10,56 +10,55 @@ use src\api\exceptions\NotFoundException;
 class Poker
 {
 
-    const ROOM_PATH = '../rooms/';
-    const ROOM_ID_LENGTH = 6;
-    private Room $room;
-    private string $room_id;
-    private int $existing_room_id_counter = 0;
+    const SESSION_PATH = '../sessions/';
+    const SESSION_ID_LENGTH = 6;
+    private Session $session;
+    private string $session_id;
+    private int $existing_session_id_counter = 0;
     private string $current_user_id;
 
     /**
      * @throws NotFoundException
      * @throws Exception
      */
-    function __construct(?string $room_id = null, ?string $owner = null)
+    function __construct(?string $session_id = null, ?string $owner = null)
     {
-        if (!is_dir(self::ROOM_PATH)) {
-            mkdir(self::ROOM_PATH);
+        if (!is_dir(self::SESSION_PATH)) {
+            mkdir(self::SESSION_PATH);
         }
-        if ($room_id === null) {
-            $this->createRoom($owner);
+        if ($session_id === null) {
+            $this->createSession($owner);
         } else {
-            $this->room_id = $room_id;
-            $this->loadRoom();
+            $this->session_id = $session_id;
+            $this->loadSession();
         }
     }
 
-    private function getRoomPath(): string
+    private function getSessionPath(): string
     {
-        return self::ROOM_PATH . $this->room_id . '.json';
+        return self::SESSION_PATH . $this->session_id . '.json';
     }
 
-    private function roomExists(): bool
+    private function sessionExists(): bool
     {
-        $file_path = $this->getRoomPath();
-        $room_exists = is_file($file_path);
+        $file_path = $this->getSessionPath();
+        $session_exists = is_file($file_path);
         clearstatcache(true, $file_path);
-        return $room_exists;
+        return $session_exists;
     }
 
     /**
      * @throws Exception
      */
-    private function generateRoomId(): void
+    private function generateSessionId(): void
     {
-        $this->room_id = getRandomString(self::ROOM_ID_LENGTH);
-        $max = strlen(RANDOM_CHARACTERS);
-        if ($this->roomExists()) {
-            if ($this->existing_room_id_counter > pow($max, self::ROOM_ID_LENGTH)) {
-                throw new Exception('no more rooms can be created');
+        $this->session_id = getRandomString(self::SESSION_ID_LENGTH);
+        if ($this->sessionExists()) {
+            if ($this->existing_session_id_counter > pow(34, self::SESSION_ID_LENGTH)) {
+                throw new Exception('no more sessions can be created');
             }
-            $this->existing_room_id_counter++;
-            $this->generateRoomId();
+            $this->existing_session_id_counter++;
+            $this->generateSessionId();
         }
     }
 
@@ -67,41 +66,41 @@ class Poker
      * @throws NotFoundException
      * @throws Exception
      */
-    private function loadRoom(): void
+    private function loadSession(): void
     {
-        if (!$this->roomExists()) {
-            throw new NotFoundException('room does not exist');
+        if (!$this->sessionExists()) {
+            throw new NotFoundException('session does not exist');
         }
-        $load = json_decode(file_get_contents($this->getRoomPath()), true);
-        $this->room = new Room($load);
+        $load = json_decode(file_get_contents($this->getSessionPath()), true);
+        $this->session = new Session($load);
     }
 
-    private function saveRoom(): void
+    private function saveSession(): void
     {
-        //file_put_contents($this->getRoomPath(), json_encode($this->room, JSON_PRETTY_PRINT));
-        file_put_contents($this->getRoomPath(), json_encode($this->room));
+        //file_put_contents($this->getSessionPath(), json_encode($this->session, JSON_PRETTY_PRINT));
+        file_put_contents($this->getSessionPath(), json_encode($this->session));
     }
 
     /**
      * @throws Exception
      */
-    private function createRoom(string $owner, ?string $password = null): void
+    private function createSession(string $owner, ?string $password = null): void
     {
-        $this->room = new Room();
-        $this->current_user_id = $this->room->addUser($owner);
+        $this->session = new Session();
+        $this->current_user_id = $this->session->addUser($owner);
         if ($password !== null) $this->getCurrentUser()->password = $password;
-        $this->generateRoomId();
-        $this->saveRoom();
+        $this->generateSessionId();
+        $this->saveSession();
     }
 
     private function getCurrentUser(): object
     {
-        return $this->room->users->{$this->current_user_id};
+        return $this->session->users->{$this->current_user_id};
     }
 
     public function validateUserToken(string $token): bool
     {
-        foreach (get_object_vars($this->room->users) as $key => $user) {
+        foreach (get_object_vars($this->session->users) as $key => $user) {
             if ($user->token == $token) {
                 $this->current_user_id = $key;
                 return true;
@@ -110,15 +109,15 @@ class Poker
         return false;
     }
 
-    public function validateRoomToken(string $token): bool
+    public function validateSessionToken(string $token): bool
     {
-        return $this->room->token === $token;
+        return $this->session->token === $token;
     }
 
     public function setUserPassword(string $password)
     {
         $this->getCurrentUser()->password = password_hash($password, PASSWORD_DEFAULT);
-        $this->saveRoom();
+        $this->saveSession();
     }
 
     /**
@@ -126,7 +125,7 @@ class Poker
      */
     public function userIsOwner(): bool
     {
-        if ($this->current_user_id !== $this->room->owner) {
+        if ($this->current_user_id !== $this->session->owner) {
             throw new ForbiddenException('you are not the owner');
         }
         return true;
@@ -135,11 +134,11 @@ class Poker
     /**
      * @throws ForbiddenException
      */
-    public function setRoomPassword(string $password): void
+    public function setSessionPassword(string $password): void
     {
         if ($this->userIsOwner()) {
-            $this->room->password = password_hash($password, PASSWORD_DEFAULT);
-            $this->saveRoom();
+            $this->session->password = password_hash($password, PASSWORD_DEFAULT);
+            $this->saveSession();
         }
     }
 
@@ -147,25 +146,25 @@ class Poker
      * @throws ForbiddenException
      * @throws Exception
      */
-    public function enterRoom(string $name, ?string $user_password = null, ?string $room_password = null): void
+    public function enterSession(string $name, ?string $user_password = null, ?string $session_password = null): void
     {
-        $this->current_user_id = $this->room->getUserIdFromName($name);
+        $this->current_user_id = $this->session->getUserIdFromName($name);
         if (!$this->current_user_id) {
-            if ($this->room->locked) {
-                throw new ForbiddenException('room is locked, new users cannot enter');
+            if ($this->session->locked) {
+                throw new ForbiddenException('session is locked, new users cannot enter');
             } else {
-                $this->current_user_id = $this->room->addUser($name);
+                $this->current_user_id = $this->session->addUser($name);
                 if ($user_password !== null) $this->setUserPassword($user_password);
-                $this->saveRoom();
+                $this->saveSession();
             }
         } else {
             if ($this->getCurrentUser()->password !== null &&
                 !password_verify($user_password, $this->getCurrentUser()->password)) {
                 throw new ForbiddenException('incorect user password');
             }
-            if ($this->room->password !== null &&
-                !password_verify($room_password, $this->room->password)) {
-                throw new ForbiddenException('incorect room password');
+            if ($this->session->password !== null &&
+                !password_verify($session_password, $this->session->password)) {
+                throw new ForbiddenException('incorect session password');
             }
         }
     }
@@ -176,9 +175,9 @@ class Poker
     public function validateToken(string $token): void
     {
         $token_set = str_split($token, strlen($token) / 2);
-        $room_token = $token_set[0];
+        $session_token = $token_set[0];
         $user_token = $token_set[1];
-        if (!$this->validateRoomToken($room_token) || !$this->validateUserToken($user_token)) {
+        if (!$this->validateSessionToken($session_token) || !$this->validateUserToken($user_token)) {
             throw new ForbiddenException('token is invalid');
         }
     }
@@ -189,8 +188,8 @@ class Poker
     public function startVote()
     {
         if ($this->userIsOwner()) {
-            $this->room->addVote();
-            $this->saveRoom();
+            $this->session->addVote();
+            $this->saveSession();
         }
     }
 
@@ -200,10 +199,10 @@ class Poker
      */
     public function vote(string $vote_id, string $card_id): void
     {
-        if (!property_exists($this->room->votes, $vote_id)) {
+        if (!property_exists($this->session->votes, $vote_id)) {
             throw new NotFoundException('vote not found');
         }
-        $vote = $this->room->votes->{$vote_id};
+        $vote = $this->session->votes->{$vote_id};
         if ($vote->revealed !== null) {
             throw new ForbiddenException('vote is already closed');
         }
@@ -215,7 +214,7 @@ class Poker
             'card' => $card_id,
             'voted' => time()
         );
-        $this->saveRoom();
+        $this->saveSession();
     }
 
     /**
@@ -225,24 +224,24 @@ class Poker
     public function revealVote(string $vote_id): void
     {
         if ($this->userIsOwner()) {
-            if (!property_exists($this->room->votes, $vote_id)) {
+            if (!property_exists($this->session->votes, $vote_id)) {
                 throw new NotFoundException('vote not found');
             }
-            $vote = $this->room->votes->{$vote_id};
+            $vote = $this->session->votes->{$vote_id};
             if ($vote->revealed !== null) {
                 throw new ForbiddenException('vote is already closed');
             }
             $vote->revealed = time();
-            $this->saveRoom();
+            $this->saveSession();
         }
     }
 
     /**
      * @throws Exception
      */
-    public function getRoomResponse(): object
+    public function getSessionResponse(): object
     {
-        $current_vote = $this->room->getCurrentVote();
+        $current_vote = $this->session->getCurrentVote();
         $current_vote_response = null;
         if ($current_vote !== null) {
             $user_voted = array_map(function ($key) {
@@ -266,7 +265,7 @@ class Poker
                 $revealed = (new DateTime)->setTimestamp($current_vote->revealed)->format(DATE_ATOM);
             }
             $current_vote_response = (object)array(
-                'key' => $this->room->getCurrentVoteKey(),
+                'key' => $this->session->getCurrentVoteKey(),
                 'revealed' => $revealed,
                 'started' => $started,
                 'votes' => $votes,
@@ -274,12 +273,12 @@ class Poker
             );
         }
         return (object)array(
-            'room' => $this->room_id,
-            'token' => $this->room->token . $this->getCurrentUser()->token,
+            'session' => $this->session_id,
+            'token' => $this->session->token . $this->getCurrentUser()->token,
             'users_id' => $this->current_user_id,
-            'users' => $this->room->getUserNames(),
-            'owner' => $this->room->owner,
-            'card_set' => $this->room->card_set,
+            'users' => $this->session->getUserNames(),
+            'owner' => $this->session->owner,
+            'card_set' => $this->session->card_set,
             'current_vote' => $current_vote_response
         );
     }

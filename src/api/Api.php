@@ -13,42 +13,42 @@ class Api extends Request
     {
         try {
 
-            // create room
-            $this->post('rooms', function ($data) {
+            // create session
+            $this->post('sessions', function ($data) {
                 $poker = new Poker(owner: $data->user->name);
                 if (property_exists($data, 'password')) $poker->setUserPassword($data->password);
-                $this->sendCreated($poker->getRoomResponse());
-            }, Structures::rooms_users());
+                $this->sendCreated($poker->getSessionResponse());
+            }, Structures::sessions_users());
 
-            // enter room
-            $this->post('rooms/<room>/users', function ($room_id, $data) {
-                $poker = new Poker(room_id: $room_id);
+            // enter session
+            $this->post('sessions/<session>/users', function ($session_id, $data) {
+                $poker = new Poker(session_id: $session_id);
                 $user_password = property_exists($data->user, 'password') ? $data->user->password : null;
-                $room_password = property_exists($data, 'room') ?
-                    (property_exists($data->room, 'password') ? $data->room->password : null) : null;
-                $poker->enterRoom($data->user->name, $user_password, $room_password);
-                $this->sendCreated($poker->getRoomResponse());
-            }, Structures::rooms_users());
+                $session_password = property_exists($data, 'session') ?
+                    (property_exists($data->session, 'password') ? $data->session->password : null) : null;
+                $poker->enterSession($data->user->name, $user_password, $session_password);
+                $this->sendCreated($poker->getSessionResponse());
+            }, Structures::sessions_users());
 
             // start vote
-            $this->post('rooms/<room>/votes', function ($room_id, $data, $headers) {
-                $poker = new Poker(room_id: $room_id);
+            $this->post('sessions/<session>/votes', function ($session_id, $data, $headers) {
+                $poker = new Poker(session_id: $session_id);
                 $poker->validateToken($headers->token);
                 $poker->startVote();
-                $this->sendSuccess($poker->getRoomResponse());
+                $this->sendSuccess($poker->getSessionResponse());
             }, Structures::empty(), ['token']);
 
             // vote
-            $this->post('rooms/<room>/votes/<vote>', function ($room_id, $vote_id, $data, $headers) {
-                $poker = new Poker(room_id: $room_id);
+            $this->post('sessions/<session>/votes/<vote>', function ($session_id, $vote_id, $data, $headers) {
+                $poker = new Poker(session_id: $session_id);
                 $poker->validateToken($headers->token);
                 $poker->vote($vote_id, $data->card);
                 $this->sendOk('voted');
             }, Structures::vote(), ['token']);
 
             // reveal vote
-            $this->patch('rooms/<room>/votes/<vote>', function ($room_id, $vote_id, $data, $headers) {
-                $poker = new Poker(room_id: $room_id);
+            $this->patch('sessions/<session>/votes/<vote>', function ($session_id, $vote_id, $data, $headers) {
+                $poker = new Poker(session_id: $session_id);
                 $poker->validateToken($headers->token);
                 $message = [];
                 if ($data->task == 'reveal') {
@@ -58,15 +58,15 @@ class Api extends Request
                 $this->sendOk(implode(', ', $message));
             }, Structures::vote_patch(), ['token']);
 
-            // patch room
-            $this->patch('rooms/<room>', function ($room_id, $data, $headers) {
+            // patch session
+            $this->patch('sessions/<session>', function ($session_id, $data, $headers) {
                 if ($data !== null) {
-                    $poker = new Poker(room_id: $room_id);
+                    $poker = new Poker(session_id: $session_id);
                     $poker->validateToken($headers->token);
                     $message = [];
                     if (property_exists($data, 'password')) {
-                        $poker->setRoomPassword($data->password);
-                        $message[] = 'room password changed';
+                        $poker->setSessionPassword($data->password);
+                        $message[] = 'session password changed';
                     }
                     $this->sendOk(implode(', ', $message));
                 } else {
@@ -74,11 +74,11 @@ class Api extends Request
                 }
             }, Structures::empty(), ['token']);
 
-            // get room
-            $this->get('rooms/<room>', function ($room_id, $headers) {
-                $poker = new Poker(room_id: $room_id);
+            // get session
+            $this->get('sessions/<session>', function ($session_id, $headers) {
+                $poker = new Poker(session_id: $session_id);
                 $poker->validateToken($headers->token);
-                $this->sendSuccess($poker->getRoomResponse());
+                $this->sendSuccess($poker->getSessionResponse());
             }, ['token']);
 
             // get card sets

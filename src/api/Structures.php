@@ -5,14 +5,14 @@ namespace src\api;
 class Structures
 {
 
-    public static function rooms_users(): array
+    public static function sessions_users(): array
     {
         return [
             new Structure('user', required: true, children: [
                 new Structure('name', required: true, max_length: 20),
                 new Structure('password')
             ]),
-            new Structure('room', children: [
+            new Structure('session', children: [
                 new Structure('name', max_length: 20),
                 new Structure('password')
             ])
