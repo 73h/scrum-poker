@@ -12,7 +12,7 @@ class Poker
 
     const SESSION_PATH = '../sessions/';
     const SESSION_ID_LENGTH = 6;
-    private PokerSession $session;
+    private Session $session;
     private string $session_id;
     private int $existing_session_id_counter = 0;
     private string $current_user_id;
@@ -72,7 +72,7 @@ class Poker
             throw new NotFoundException('session does not exist');
         }
         $load = json_decode(file_get_contents($this->getSessionPath()), true);
-        $this->session = new PokerSession($load);
+        $this->session = new Session($load);
     }
 
     private function saveSession(): void
@@ -86,7 +86,7 @@ class Poker
      */
     private function createSession(string $owner, ?string $password = null): void
     {
-        $this->session = new PokerSession();
+        $this->session = new Session();
         $this->current_user_id = $this->session->addUser($owner);
         if ($password !== null) $this->getCurrentUser()->password = $password;
         $this->generateSessionId();

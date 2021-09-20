@@ -159,7 +159,7 @@ vc_hdrs.h
 [._]ss[a-gi-z]
 [._]sw[a-p]
 
-# PokerSession
+# Session
 Session.vim
 Sessionx.vim
 
