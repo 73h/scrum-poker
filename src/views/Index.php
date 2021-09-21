@@ -13,7 +13,6 @@ class Index extends View
 
     private function render()
     {
-        error_log(json_encode($_SERVER));
         $variables = array(
             'title' => 'online planning poker',
             'description' => 'online planning poker for scrum teams',

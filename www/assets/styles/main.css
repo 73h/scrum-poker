@@ -1,15 +1,29 @@
 :root {
     color-scheme: light dark;
+    --text-color-dark: #eee;
+    --text-color-light: #222;
+    --bkg-color-dark: #121212;
+    --bkg-color-light: #fff;
+    --bkg-color-nuance-dark: #222;
+    --bkg-color-nuance-light: #efefef;
+    --bkg-color-inverted-dark: #ddd;
+    --bkg-color-inverted-light: #323232;
 }
 
 body {
-    --text-color: #222;
-    --bkg-color: #fff;
+    --text-color: var(--text-color-light);
+    --text-color-inverted: var(--text-color-dark);
+    --bkg-color: var(--bkg-color-light);
+    --bkg-color-inverted: var(--bkg-color-inverted-light);
+    --bkg-color-nuance: var(--bkg-color-nuance-light);
 }
 
 body.dark-theme {
-    --text-color: #eee;
-    --bkg-color: #121212;
+    --text-color: var(--text-color-dark);
+    --text-color-inverted: var(--text-color-light);
+    --bkg-color: var(--bkg-color-dark);
+    --bkg-color-inverted: var(--bkg-color-inverted-dark);
+    --bkg-color-nuance: var(--bkg-color-nuance-dark);
 }
 
 .scheme-toogle .light {
@@ -31,13 +45,19 @@ body.dark-theme .scheme-toogle .light {
 @media (prefers-color-scheme: dark) {
 
     body {
-        --text-color: #eee;
-        --bkg-color: #121212;
+        --text-color: var(--text-color-dark);
+        --text-color-inverted: var(--text-color-light);
+        --bkg-color: var(--bkg-color-dark);
+        --bkg-color-inverted: var(--bkg-color-inverted-dark);
+        --bkg-color-nuance: var(--bkg-color-nuance-dark);
     }
 
     body.light-theme {
-        --text-color: #222;
-        --bkg-color: #fff;
+        --text-color: var(--text-color-light);
+        --text-color-inverted: var(--text-color-dark);
+        --bkg-color: var(--bkg-color-light);
+        --bkg-color-inverted: var(--bkg-color-inverted-light);
+        --bkg-color-nuance: var(--bkg-color-nuance-light);
     }
 
     .scheme-toogle .light {
@@ -63,12 +83,13 @@ body, input {
 }
 
 body {
-    margin: 1em 2em;
+    margin: 0em;
 }
 
 * {
     font-family: 'Share Tech Mono', monospace;
     color: var(--text-color);
+    transition: color .5s, background .5s;
 }
 
 .scheme-toogle .light {
@@ -82,28 +103,62 @@ body {
 .scheme-toogle {
     float: right;
     cursor: pointer;
-}
-
-h1 {
-    margin-bottom: 0.2em;
-}
-
-h2 {
-    font-size: 1em;
-    margin-top: 0;
+    margin-right: 2.5em;
 }
 
 label {
-    font-size: 1.5em;
+    font-size: 1.3em;
 }
 
-input {
+input, button {
     font-size: 1.2em;
     padding: .5em;
     margin-top: 0.5em;
     border: dotted 1px var(--text-color);
 }
 
-.main {
-    margin: 2em 0;
+button {
+    cursor: pointer;
+    background: var(--bkg-color-inverted);
+    color: var(--text-color-inverted);
+}
+
+button:hover {
+    cursor: pointer;
+    background: var(--bkg-color);
+    color: var(--text-color);
+}
+
+main {
+    background: var(--bkg-color-nuance);
+}
+
+header h1, header h2, footer p, main div {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 900px;
+}
+
+header, footer, main {
+    padding: 2.5em 0;
+}
+
+h1 {
+    margin: 0;
+}
+
+h2 {
+    font-size: 1.3em;
+}
+
+@media only screen and (max-width: 900px) {
+
+    header, footer, main {
+        padding: 1.5em 1.5em;
+    }
+
+    .scheme-toogle {
+        margin-right: 1.5em;
+    }
+
 }

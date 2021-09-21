@@ -26,7 +26,7 @@ class Structures
         ];
     }
 
-    public static function vote_patch(): array
+    public static function vote_put(): array
     {
         return [
             new Structure('task', required: true),

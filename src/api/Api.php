@@ -47,7 +47,7 @@ class Api extends Request
             }, Structures::vote(), ['token']);
 
             // reveal vote
-            $this->patch('sessions/<session>/votes/<vote>', function ($session_id, $vote_id, $data, $headers) {
+            $this->put('sessions/<session>/votes/<vote>', function ($session_id, $vote_id, $data, $headers) {
                 $poker = new Poker(session_id: $session_id);
                 $poker->validateToken($headers->token);
                 $message = [];
@@ -56,10 +56,10 @@ class Api extends Request
                     $message[] = 'vote revealed';
                 }
                 $this->sendOk(implode(', ', $message));
-            }, Structures::vote_patch(), ['token']);
+            }, Structures::vote_put(), ['token']);
 
-            // patch session
-            $this->patch('sessions/<session>', function ($session_id, $data, $headers) {
+            // put session
+            $this->put('sessions/<session>', function ($session_id, $data, $headers) {
                 if ($data !== null) {
                     $poker = new Poker(session_id: $session_id);
                     $poker->validateToken($headers->token);

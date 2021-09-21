@@ -85,10 +85,10 @@ class Request
         }
     }
 
-    protected function patch(string $route, callable $callback, array $payload_structure, ?array $required_headers = null): void
+    protected function put(string $route, callable $callback, array $payload_structure, ?array $required_headers = null): void
     {
-        if ($this->method == 'PATCH') {
-            $this->route($route, 'PATCH', $callback, $payload_structure, $required_headers);
+        if ($this->method == 'PUT') {
+            $this->route($route, 'PUT', $callback, $payload_structure, $required_headers);
         }
     }
 
