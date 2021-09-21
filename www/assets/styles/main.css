@@ -159,6 +159,10 @@ h2 {
     font-size: 1.3em;
 }
 
+.error {
+    color: #dd0000;
+}
+
 @media only screen and (max-width: 900px) {
 
     header, footer, main {

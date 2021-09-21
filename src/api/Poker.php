@@ -275,7 +275,7 @@ class Poker
         return (object)array(
             'session' => $this->session_id,
             'token' => $this->session->token . $this->getCurrentUser()->token,
-            'users_id' => $this->current_user_id,
+            'user_id' => $this->current_user_id,
             'users' => $this->session->getUserNames(),
             'owner' => $this->session->owner,
             'card_set' => $this->session->card_set,

@@ -37,7 +37,8 @@ class Cards
         );
     }
 
-    public static function fibonacci_extended(): object
+    public static function fibonacci_ext(): object
+
     {
         return (object)array(
             '1' => new Card('1', Card::LOW),
@@ -70,7 +71,7 @@ class Cards
         );
     }
 
-    public static function clothing_size(): object
+    public static function sizes(): object
     {
         return (object)array(
             '1' => new Card('XS', Card::LOW),
@@ -103,9 +104,9 @@ class Cards
         return (object)array(
             'default' => self::default(),
             'fibonacci' => self::fibonacci(),
-            'fibonacci_extended' => self::fibonacci_extended(),
+            'fibonacci_ext' => self::fibonacci_ext(),
             'smilies' => self::smilies(),
-            'clothing_size' => self::clothing_size(),
+            'sizes' => self::sizes(),
             'school' => self::school()
         );
     }

@@ -13,7 +13,7 @@ class Api extends Request
     {
         try {
 
-            // create session
+            // start session
             $this->post('sessions', function ($data) {
                 $poker = new Poker(owner: $data->user->name);
                 if (property_exists($data, 'password')) $poker->setUserPassword($data->password);

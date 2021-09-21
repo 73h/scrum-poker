@@ -11,8 +11,9 @@
                 <select id="cards"></select>
             </p>
             <p>
-                <button>start session</button>
+                <button id="btn-start">start session</button>
             </p>
+            <p class="error"></p>
         </div>
         <div class="enter-session">
             <h3>Enter a Session</h3>
@@ -25,15 +26,17 @@
                 <input type="text" placeholder="session id" id="session-id"/>
             </p>
             <p>
-                <button>enter session</button>
+                <button id="btn-enter">enter session</button>
             </p>
+            <p class="error"></p>
         </div>
     </div>
     <div class="session">
-        <p>session-link: <a href="">https://dev.poker.3doo.de/614a2b</a></p>
-        <p>user: heiko (admin), jessi, lea</p>
-        <button>reveal</button>
-        <button disabled="disabled">new vote</button>
-        <button>qrcode</button>
+        <p id="session-link"></p>
+        <p id="users"></p>
+        <button id="btn-reveal">reveal</button>
+        <button id="btn-new-vote">new vote</button>
+        <button id="btn-qrcode">qrcode</button>
+        <p class="error"></p>
     </div>
 </main>
