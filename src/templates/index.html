@@ -1,15 +1,42 @@
 <main>
-    <div>
-        <h3>Start a new Session</h3>
-        <p>
-            <label for="member">username</label><br>
-            <input type="text" placeholder="your name" id="member"/>
-        </p>
-        <p>
-            <button>create session</button>
-        </p>
-        <p>
-            <i style="color:#dd0000">.. this project is still being worked on - please come back later.</i>
-        </p>
+    <div class="welcome">
+        <div class="start-session">
+            <h3>Start a new Session</h3>
+            <p>
+                <label for="member-start">username</label><br>
+                <input type="text" placeholder="your name" id="member-start"/>
+            </p>
+            <p>
+                <label for="cards">cards</label><br>
+                <select id="cards">
+                    <option>default</option>
+                    <option>fibonacci</option>
+                </select>
+            </p>
+            <p>
+                <button>start</button>
+            </p>
+        </div>
+        <div class="enter-session">
+            <h3>Enter a Session</h3>
+            <p>
+                <label for="member-enter">username</label><br>
+                <input type="text" placeholder="your name" id="member-enter"/>
+            </p>
+            <p>
+                <label for="session-id">session id</label><br>
+                <input type="text" placeholder="session id" id="session-id"/>
+            </p>
+            <p>
+                <button>enter</button>
+            </p>
+        </div>
+    </div>
+    <div class="session">
+        <p>session-link: <a href="">https://dev.poker.3doo.de/614a2b</a></p>
+        <p>user: heiko (admin), jessi, lea</p>
+        <button>reveal</button>
+        <button disabled="disabled">new vote</button>
+        <button>qrcode</button>
     </div>
 </main>
