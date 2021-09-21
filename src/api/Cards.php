@@ -37,7 +37,7 @@ class Cards
         );
     }
 
-    public static function fibonacci_extends(): object
+    public static function fibonacci_extended(): object
     {
         return (object)array(
             '1' => new Card('1', Card::LOW),
@@ -103,7 +103,7 @@ class Cards
         return (object)array(
             'default' => self::default(),
             'fibonacci' => self::fibonacci(),
-            'fibonacci_extends' => self::fibonacci_extends(),
+            'fibonacci_extended' => self::fibonacci_extended(),
             'smilies' => self::smilies(),
             'clothing_size' => self::clothing_size(),
             'school' => self::school()

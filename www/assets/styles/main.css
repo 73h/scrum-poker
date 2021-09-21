@@ -169,4 +169,12 @@ h2 {
         margin-right: 0;
     }
 
+    button, select {
+        width: 100%;
+    }
+
+    input {
+        width: calc(100% - 1em);
+    }
+
 }
