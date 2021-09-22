@@ -27,7 +27,6 @@ const currentUsername = localStorage.getItem("username");
 
 window.addEventListener("DOMContentLoaded", function () {
     divSession.style.display = "none";
-    loadCards();
     loadUsername();
     loadSessionId();
 });
@@ -66,6 +65,7 @@ function loadSessionId() {
         divStartSession.style.display = "none";
     } else {
         divEnterSession.style.display = "none";
+        loadCards();
     }
 }
 
@@ -145,17 +145,17 @@ function openSession(session) {
         apiFetch("/api/sessions/" + window.session.session, "GET", pErrorSession, function (data) {
             refreshSession(data);
         }, null, window.session.token);
-    }, 10000);
+    }, 2000);
 }
 
 function refreshSession(session) {
     window.session = session;
     setUsers();
-    //console.log(window.session);
+    console.log(window.session);
 }
 
 function setSessionLink() {
-    const link = document.URL.replace(/\/[a-z0-9]{6}$/, "") + "/" + window.session.session;
+    const link = document.URL.replace(/\/$/, "").replace(/\/[a-z0-9]{6}$/, "") + "/" + window.session.session;
     pSessionLink.innerHTML = 'session-link: <a href="' + link + '">' + link + '</a>'
 }
 
@@ -163,12 +163,12 @@ function setUsers() {
     let strUsers = "users: ";
     let arrUsers = [];
     for (const [key, value] of Object.entries(window.session.users)) {
-        let name = value.name
-        if (key === window.session.user_id) {
-            name += " (owner)";
+        let name = '<div class="' + (value.alive ? 'online' : 'offline') + '"></div>' + value.name
+        if (key === window.session.owner) {
+            name += '<span class="small">(owner)</span>';
         }
         arrUsers.push(name);
     }
-    strUsers += arrUsers.join(", ");
+    strUsers += arrUsers.join(" ");
     pUsers.innerHTML = strUsers;
 }

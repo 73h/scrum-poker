@@ -1,7 +1,7 @@
 :root {
     color-scheme: light dark;
-    --text-color-dark: #eee;
-    --text-color-light: #222;
+    --text-color-dark: #ddd;
+    --text-color-light: #333;
     --bkg-color-dark: #121212;
     --bkg-color-light: #fff;
     --bkg-color-nuance-dark: #222;
@@ -161,6 +161,33 @@ h2 {
 
 .error {
     color: #dd0000;
+}
+
+.online, .offline {
+    width: .5em;
+    height: .5em;
+    border-radius: .5em;
+    display: inline-block;
+    margin-right: .3em;
+}
+
+.online {
+    background-color: green;
+}
+
+.offline {
+    background-color: #cc0000;
+}
+
+.unalive {
+    width: .5em;
+    height: .5em;
+    border-radius: .5em;
+}
+
+.small {
+    font-size: .8em;
+    margin-left: .2em;
 }
 
 @media only screen and (max-width: 900px) {

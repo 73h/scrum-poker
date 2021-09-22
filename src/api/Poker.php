@@ -10,10 +10,11 @@ use src\api\exceptions\NotFoundException;
 class Poker
 {
 
-    const SESSION_PATH = '../sessions/';
+    const SESSION_BASE_PATH = '../sessions/';
+    private ?string $session_path = null;
     const SESSION_ID_LENGTH = 6;
     private Session $session;
-    private string $session_id;
+    private ?string $session_id = null;
     private int $existing_session_id_counter = 0;
     private string $current_user_id;
 
@@ -23,8 +24,8 @@ class Poker
      */
     function __construct(?string $session_id = null, ?string $owner = null)
     {
-        if (!is_dir(self::SESSION_PATH)) {
-            mkdir(self::SESSION_PATH);
+        if (!is_dir(self::SESSION_BASE_PATH)) {
+            mkdir(self::SESSION_BASE_PATH);
         }
         if ($session_id === null) {
             $this->createSession($owner);
@@ -34,16 +35,47 @@ class Poker
         }
     }
 
-    private function getSessionPath(): string
+
+    /**
+     * @throws Exception
+     */
+    private function makeSessionBasePath(): void
     {
-        return self::SESSION_PATH . $this->session_id . '.json';
+        if ($this->session_id === null) {
+            $this->generateSessionId();
+        }
+        $this->session_path = self::SESSION_BASE_PATH . $this->session_id . '/';
+        if (!is_dir($this->session_path)) {
+            mkdir($this->session_path);
+        }
     }
 
+    /**
+     * @throws Exception
+     */
+    private function getSessionPath(): string
+    {
+        $this->makeSessionBasePath();
+        return $this->session_path . 'session.json';
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function getUserSessionAlivePath($user_is): string
+    {
+        $this->makeSessionBasePath();
+        return $this->session_path . $user_is . '.alive';
+    }
+
+    /**
+     * @throws Exception
+     */
     private function sessionExists(): bool
     {
-        $file_path = $this->getSessionPath();
-        $session_exists = is_file($file_path);
-        clearstatcache(true, $file_path);
+        if ($this->session_id === null) return false;
+        $session_exists = is_dir(self::SESSION_BASE_PATH . $this->session_id);
+        clearstatcache(true, self::SESSION_BASE_PATH . $this->session_id);
         return $session_exists;
     }
 
@@ -81,6 +113,11 @@ class Poker
         file_put_contents($this->getSessionPath(), json_encode($this->session));
     }
 
+    private function saveUserSessionAlive(): void
+    {
+        file_put_contents($this->getUserSessionAlivePath($this->current_user_id), time());
+    }
+
     /**
      * @throws Exception
      */
@@ -88,8 +125,8 @@ class Poker
     {
         $this->session = new Session();
         $this->current_user_id = $this->session->addUser($owner);
+        $this->saveUserSessionAlive();
         if ($password !== null) $this->getCurrentUser()->password = $password;
-        $this->generateSessionId();
         $this->saveSession();
     }
 
@@ -98,11 +135,28 @@ class Poker
         return $this->session->users->{$this->current_user_id};
     }
 
+    /**
+     * @throws Exception
+     */
+    private function getUserNames(): object
+    {
+        $users = (object)[];
+        foreach (get_object_vars($this->session->users) as $key => $user) {
+            $user_alive_time = file_get_contents($this->getUserSessionAlivePath($key));
+            $users->{$key} = (object)[
+                'name' => $user->name,
+                'alive' => (time() - $user_alive_time < 3)
+            ];
+        }
+        return $users;
+    }
+
     public function validateUserToken(string $token): bool
     {
         foreach (get_object_vars($this->session->users) as $key => $user) {
             if ($user->token == $token) {
                 $this->current_user_id = $key;
+                $this->saveUserSessionAlive();
                 return true;
             }
         }
@@ -167,12 +221,13 @@ class Poker
                 throw new ForbiddenException('incorect session password');
             }
         }
+        $this->saveUserSessionAlive();
     }
 
     /**
      * @throws ForbiddenException
      */
-    public function validateToken(string $token): void
+    public function validateToken(?string $token): void
     {
         $token_set = str_split($token, strlen($token) / 2);
         $session_token = $token_set[0];
@@ -210,10 +265,10 @@ class Poker
         if (!property_exists($card_set, $card_id)) {
             throw new NotFoundException('card not found');
         }
-        $vote->votes->{$this->current_user_id} = (object)array(
+        $vote->votes->{$this->current_user_id} = (object)[
             'card' => $card_id,
             'voted' => time()
-        );
+        ];
         $this->saveSession();
     }
 
@@ -249,13 +304,13 @@ class Poker
             }, array_keys(get_object_vars($current_vote->votes)));
             $votes = null;
             if ($current_vote->revealed !== null) {
-                $votes = (object)array();
+                $votes = (object)[];
                 foreach ($current_vote->votes as $user_id => $vote) {
                     $voted = (new DateTime)->setTimestamp($vote->voted)->format(DATE_ATOM);
-                    $votes->{$user_id} = (object)array(
+                    $votes->{$user_id} = (object)[
                         'card' => $vote->card,
                         'voted' => $voted
-                    );
+                    ];
                 }
             }
             // $started = (new DateTime('now', new DateTimeZone('Europe/Berlin')))->setTimestamp($current_vote->started);
@@ -264,23 +319,31 @@ class Poker
             if (($current_vote->revealed !== null)) {
                 $revealed = (new DateTime)->setTimestamp($current_vote->revealed)->format(DATE_ATOM);
             }
-            $current_vote_response = (object)array(
+            $current_vote_response = (object)[
                 'key' => $this->session->getCurrentVoteKey(),
                 'revealed' => $revealed,
                 'started' => $started,
                 'votes' => $votes,
                 'user_voted' => $user_voted
-            );
+            ];
         }
-        return (object)array(
+        return (object)[
             'session' => $this->session_id,
             'token' => $this->session->token . $this->getCurrentUser()->token,
             'user_id' => $this->current_user_id,
-            'users' => $this->session->getUserNames(),
+            'users' => $this->getUserNames(),
             'owner' => $this->session->owner,
             'card_set' => $this->session->card_set,
             'current_vote' => $current_vote_response
-        );
+        ];
+    }
+
+    public function getBasicSessionResponse(): object
+    {
+        return (object)[
+            'session' => $this->session_id,
+            'has_password' => $this->session->password !== null
+        ];
     }
 
 }

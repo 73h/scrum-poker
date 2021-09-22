@@ -71,28 +71,28 @@ class Request
         }
     }
 
-    protected function get(string $route, callable $callback, ?array $required_headers = null): void
+    protected function get(string $route, callable $callback, ?object $required_headers = null): void
     {
         if ($this->method == 'GET' && $this->data == null) {
             $this->route($route, 'GET', $callback, required_headers: $required_headers);
         }
     }
 
-    protected function post(string $route, callable $callback, array $payload_structure, ?array $required_headers = null): void
+    protected function post(string $route, callable $callback, array $payload_structure, ?object $required_headers = null): void
     {
         if ($this->method == 'POST') {
             $this->route($route, 'POST', $callback, $payload_structure, $required_headers);
         }
     }
 
-    protected function put(string $route, callable $callback, array $payload_structure, ?array $required_headers = null): void
+    protected function put(string $route, callable $callback, array $payload_structure, ?object $required_headers = null): void
     {
         if ($this->method == 'PUT') {
             $this->route($route, 'PUT', $callback, $payload_structure, $required_headers);
         }
     }
 
-    private function route(string $route, string $method, callable $callback, ?array $payload_structure = null, ?array $required_headers = null): void
+    private function route(string $route, string $method, callable $callback, ?array $payload_structure = null, ?object $required_headers = null): void
     {
         $route = '^' . str_replace('/', '\/', $route) . '$';
         $pattern = '/' . preg_replace('/\<[a-z_]+\>/i', '([a-z0-9]*)', $route) . '/i';
@@ -112,10 +112,10 @@ class Request
             }
             if ($required_headers !== null) {
                 $headers = (object)array();
-                foreach ($required_headers as $required_header) {
-                    $header = $this->getHeader($required_header);
-                    if ($header === null) $this->sendBadRequest(detail: $required_header . ' header is missing');
-                    $headers->$required_header = $header;
+                foreach ($required_headers as $key => $value) {
+                    $header = $this->getHeader($key);
+                    if ($header === null && $value->required) $this->sendBadRequest(detail: $key . ' header is missing');
+                    $headers->$key = $header;
                 }
                 array_push($parameters, $headers);
             }

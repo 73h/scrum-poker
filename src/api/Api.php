@@ -36,7 +36,7 @@ class Api extends Request
                 $poker->validateToken($headers->token);
                 $poker->startVote();
                 $this->sendSuccess($poker->getSessionResponse());
-            }, Structures::empty(), ['token']);
+            }, Structures::empty(), (object)['token' => (object)['required' => true]]);
 
             // vote
             $this->post('sessions/<session>/votes/<vote>', function ($session_id, $vote_id, $data, $headers) {
@@ -44,7 +44,7 @@ class Api extends Request
                 $poker->validateToken($headers->token);
                 $poker->vote($vote_id, $data->card);
                 $this->sendOk('voted');
-            }, Structures::vote(), ['token']);
+            }, Structures::vote(), (object)['token' => (object)['required' => true]]);
 
             // reveal vote
             $this->put('sessions/<session>/votes/<vote>', function ($session_id, $vote_id, $data, $headers) {
@@ -56,7 +56,7 @@ class Api extends Request
                     $message[] = 'vote revealed';
                 }
                 $this->sendOk(implode(', ', $message));
-            }, Structures::vote_put(), ['token']);
+            }, Structures::vote_put(), (object)['token' => (object)['required' => true]]);
 
             // put session
             $this->put('sessions/<session>', function ($session_id, $data, $headers) {
@@ -72,14 +72,18 @@ class Api extends Request
                 } else {
                     $this->sendBadRequest(detail: 'payload is empty');
                 }
-            }, Structures::empty(), ['token']);
+            }, Structures::empty(), (object)['token' => (object)['required' => true]]);
 
             // get session
             $this->get('sessions/<session>', function ($session_id, $headers) {
                 $poker = new Poker(session_id: $session_id);
-                $poker->validateToken($headers->token);
-                $this->sendSuccess($poker->getSessionResponse());
-            }, ['token']);
+                if ($headers->token !== null) {
+                    $poker->validateToken($headers->token);
+                    $this->sendSuccess($poker->getSessionResponse());
+                } else {
+                    $this->sendSuccess($poker->getBasicSessionResponse());
+                }
+            }, (object)['token' => (object)['required' => false]]);
 
             // get card sets
             $this->get('cards', function () {

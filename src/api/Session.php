@@ -22,9 +22,9 @@ class Session
     public function __construct(?array $load = null)
     {
         $this->created = time();
-        $this->users = (object)array();
+        $this->users = (object)[];
         $this->token = getRandomString(16);
-        $this->votes = (object)array();
+        $this->votes = (object)[];
         if ($load !== null) {
             $this->load($this, $load);
         }
@@ -36,11 +36,11 @@ class Session
             if (is_array($value)) {
                 if (is_object($obj)) {
                     if (!property_exists($obj, $key)) {
-                        $obj->{$key} = (object)array();
+                        $obj->{$key} = (object)[];
                     }
                     $this->load($obj->{$key}, $value);
                 } elseif (is_array($obj)) {
-                    array_push($obj, (object)array());
+                    array_push($obj, (object)[]);
                     $this->load($obj[$key], $value);
                 }
             } else {
@@ -61,23 +61,14 @@ class Session
         $user_id = array_search($name, $users);
         if (!$user_id) {
             $user_id = strval(count(get_object_vars($this->users)) + 1);
-            $this->users->{$user_id} = (object)array(
+            $this->users->{$user_id} = (object)[
                 'name' => $name,
                 'token' => getRandomString(16),
                 'password' => null
-            );
+            ];
             if ($this->owner === null) $this->owner = $user_id;
         }
         return $user_id;
-    }
-
-    public function getUserNames(): object
-    {
-        $users = (object)array();
-        foreach (get_object_vars($this->users) as $key => $user) {
-            $users->{$key} = (object)array('name' => $user->name);
-        }
-        return $users;
     }
 
     public function getUserIdFromName(string $name): ?string
@@ -104,13 +95,13 @@ class Session
     {
         $last_vote = $this->getCurrentVote();
         if ($last_vote === null || $last_vote->revealed !== null) {
-            $votes = (object)array();
-            $this->votes->{strval(count(get_object_vars($this->votes)) + 1)} = (object)array(
+            $votes = (object)[];
+            $this->votes->{strval(count(get_object_vars($this->votes)) + 1)} = (object)[
                 'started' => time(),
                 'votes' => $votes,
                 'revealed' => null,
                 'card_set' => $this->card_set
-            );
+            ];
         }
     }
 
