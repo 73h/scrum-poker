@@ -151,7 +151,7 @@ function openSession(session) {
 function refreshSession(session) {
     window.session = session;
     setUsers();
-    console.log(window.session);
+    //console.log(window.session);
 }
 
 function setSessionLink() {
