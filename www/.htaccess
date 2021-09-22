@@ -1,4 +1,4 @@
 RewriteEngine on
 RewriteRule ^\/?api\/(.*) index.php?api=$1
 RewriteRule ^\/?([a-z\-])+\.html index.php?site=$1
-RewriteRule ^.+\/?[a-z0-9]{6}$ index.php?site=index
+RewriteRule [a-z0-9]{6}$ index.php?site=index
