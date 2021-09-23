@@ -19,12 +19,15 @@ class Session
     /**
      * @throws Exception
      */
-    public function __construct(?array $load = null)
+    public function __construct(?array $load = null, ?string $card_set = null)
     {
         $this->created = time();
         $this->users = (object)[];
         $this->token = getRandomString(16);
         $this->votes = (object)[];
+        if ($card_set !== null) {
+            $this->card_set = $card_set;
+        }
         if ($load !== null) {
             $this->load($this, $load);
         }

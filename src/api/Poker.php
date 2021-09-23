@@ -22,13 +22,14 @@ class Poker
      * @throws NotFoundException
      * @throws Exception
      */
-    function __construct(?string $session_id = null, ?string $owner = null)
+    function __construct(?string $session_id = null, ?string $owner = null, ?string $card_set = null)
     {
         if (!is_dir(self::SESSION_BASE_PATH)) {
             mkdir(self::SESSION_BASE_PATH);
         }
         if ($session_id === null) {
-            $this->createSession($owner);
+            $this->createSession($owner, $card_set);
+            $this->startVote();
         } else {
             $this->session_id = $session_id;
             $this->loadSession();
@@ -121,12 +122,11 @@ class Poker
     /**
      * @throws Exception
      */
-    private function createSession(string $owner, ?string $password = null): void
+    private function createSession(string $owner, ?string $card_set = null): void
     {
-        $this->session = new Session();
+        $this->session = new Session(card_set: $card_set);
         $this->current_user_id = $this->session->addUser($owner);
         $this->saveUserSessionAlive();
-        if ($password !== null) $this->getCurrentUser()->password = $password;
         $this->saveSession();
     }
 
@@ -319,12 +319,17 @@ class Poker
             if (($current_vote->uncovered !== null)) {
                 $uncovered = (new DateTime)->setTimestamp($current_vote->uncovered)->format(DATE_ATOM);
             }
+            $your_vote = null;
+            if (property_exists($current_vote->votes, $this->current_user_id)) {
+                $your_vote = (object)['card' => $current_vote->votes->{$this->current_user_id}->card];
+            }
             $current_vote_response = (object)[
                 'key' => $this->session->getCurrentVoteKey(),
                 'uncovered' => $uncovered,
                 'started' => $started,
                 'votes' => $votes,
-                'user_voted' => $user_voted
+                'user_voted' => $user_voted,
+                'your_vote' => $your_vote
             ];
         }
         return (object)[

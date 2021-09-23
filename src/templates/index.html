@@ -1,6 +1,6 @@
 <main>
-    <div class="error main-error">Sorry.. please use a modern browser for this page.</div>
-    <div class="welcome">
+    <div class="error main-error row">Sorry.. please use a modern browser for this page.</div>
+    <div class="welcome row">
         <div class="start-session" style="display:none;">
             <h3>Start a new Session</h3>
             <p>
@@ -8,8 +8,8 @@
                 <input type="text" placeholder="your name" id="member-start"/>
             </p>
             <p>
-                <label for="cards">cards</label><br>
-                <select id="cards"></select>
+                <label for="card-set">cards</label><br>
+                <select id="card-set"></select>
             </p>
             <p>
                 <label for="session-password-start">(optional) session password</label><br>
@@ -40,7 +40,7 @@
             <p class="error"></p>
         </div>
     </div>
-    <div class="session" style="display:none;">
+    <div class="session row" style="display:none;">
         <p id="session-link"></p>
         <p id="users"></p>
         <button id="btn-uncover">
@@ -57,7 +57,7 @@
             </svg>
             <span>uncover</span>
         </button>
-        <button id="btn-new-vote">
+        <button id="btn-new-vote" disabled="disabled">
             <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 172 172">
                 <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt"
                    stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0"
@@ -113,6 +113,10 @@
             </svg>
             <span>exit</span>
         </button>
+        <div>
+            <div id="user-cards"></div>
+        </div>
         <p class="error"></p>
+        <p id="user-votings"></p>
     </div>
 </main>

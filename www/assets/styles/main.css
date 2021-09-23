@@ -72,7 +72,7 @@ body.dark-theme {
     display: var(--visible-light);
 }
 
-.scheme-toggle .icon, .icons8 .icon {
+.scheme-toggle .icon, .icons8 .icon, #user-not-done .icon {
     fill: var(--text-color);
 }
 
@@ -87,7 +87,7 @@ body {
 * {
     font-family: 'Share Tech Mono', monospace;
     color: var(--text-color);
-    transition: color .5s, background .5s;
+    transition: color .5s, background .5s, fill .5s;
 }
 
 .scheme-toggle {
@@ -129,12 +129,6 @@ button:hover span {
     color: var(--text-color);
 }
 
-button:disabled {
-    background: var(--bkg-color-nuance);
-    color: var(--text-color);
-    cursor: default;
-}
-
 button svg {
     margin: -.3em 0;
     width: 1.2em;
@@ -149,11 +143,15 @@ button:hover .icon {
     fill: var(--text-color);
 }
 
+button:disabled {
+    display: none !important;
+}
+
 main {
     background: var(--bkg-color-nuance);
 }
 
-header h1, header h2, header p, footer p, main div {
+header h1, header h2, header p, footer p, main .row {
     margin-left: auto;
     margin-right: auto;
     max-width: 900px;
@@ -202,6 +200,87 @@ h2 {
     margin-left: .2em;
 }
 
+#user-cards {
+    margin-top: 1em;
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-content: flex-start;
+    align-items: flex-start;
+    gap: 0 0;
+}
+
+#user-cards div {
+    position: relative;
+    cursor: pointer;
+    margin-top: 0;
+    margin-bottom: .5em;
+}
+
+#user-cards div.selected {
+    margin-top: .5em;
+    margin-bottom: 0;
+}
+
+#user-cards span {
+    font-size: 2em;
+    position: absolute;
+    top: .6em;
+    left: .50em;
+}
+
+#user-cards .card-svg {
+    width: 4.4em;
+    height: 4.4em;
+    margin: 0 -.7em;
+}
+
+#user-cards .cafe-svg {
+    width: 2.4em;
+    height: 2.4em;
+    position: absolute;
+    top: .72em;
+    left: .37em;
+}
+
+#user-cards .low {
+    fill: green;
+    color: green;
+}
+
+#user-cards .middle {
+    fill: goldenrod;
+    color: goldenrod;
+}
+
+#user-cards .high {
+    fill: orangered;
+    color: orangered;
+}
+
+#user-cards .unknown {
+    fill: steelblue;
+    color: steelblue;
+}
+
+#user-cards div:hover span, #user-cards div:hover svg g g path {
+    color: var(--text-color) !important;
+    fill: var(--text-color) !important;
+    transition: color 0s, fill 0s;
+}
+
+#user-votings .user-voting {
+    margin-top: .5em;
+}
+
+#user-votings svg {
+    width: 1.2em;
+    height: 1.2em;
+    margin-bottom: -.3em;
+    margin-right: .5em;
+}
+
 @media only screen and (max-width: 900px) {
 
     header, footer, main {
@@ -215,15 +294,5 @@ h2 {
     button span {
         display: none;
     }
-
-    /*
-    button, select {
-        width: 100%;
-    }
-
-    input {
-        width: calc(100% - 1em);
-    }
-    */
 
 }

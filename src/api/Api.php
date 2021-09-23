@@ -15,13 +15,15 @@ class Api extends Request
 
             // start session
             $this->post('sessions', function ($data) {
-                $poker = new Poker(owner: $data->user->name);
-                if (property_exists($data->user, 'password')) $poker->setUserPassword($data->password);
-                if (property_exists($data, 'session') && property_exists($data->session, 'password')) {
+                $poker = new Poker(owner: $data->user->name, card_set: $data->session->card_set);
+                if (property_exists($data->user, 'password')) {
+                    $poker->setUserPassword($data->user->password);
+                }
+                if (property_exists($data->session, 'password')) {
                     $poker->setSessionPassword($data->session->password);
                 }
                 $this->sendCreated($poker->getSessionResponse());
-            }, Structures::sessions_users());
+            }, Structures::sessions());
 
             // enter session
             $this->post('sessions/<session>/users', function ($session_id, $data) {
