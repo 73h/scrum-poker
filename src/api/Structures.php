@@ -9,11 +9,10 @@ class Structures
     {
         return [
             new Structure('user', required: true, children: [
-                new Structure('name', required: true, max_length: 20),
+                new Structure('name', required: true, max_length: 20, min_length: 2),
                 new Structure('password')
             ]),
             new Structure('session', children: [
-                new Structure('name', max_length: 20),
                 new Structure('password')
             ])
         ];

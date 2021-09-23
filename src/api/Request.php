@@ -60,6 +60,19 @@ class Request
 
                         }
                     }
+                    if ($value->type == 'string' && $value->min_length !== null) {
+                        if (strlen($data->{$value->name}) < $value->min_length) {
+                            $temp_nested_key .= $value->name;
+                            $this->sendBadRequest(
+                                detail: 'field ' .
+                                $temp_nested_key .
+                                ' requires at least ' .
+                                strval($value->min_length) .
+                                ' characters'
+                            );
+
+                        }
+                    }
                 }
                 if ($value->children !== null) {
                     if (property_exists($data, $value->name)) {

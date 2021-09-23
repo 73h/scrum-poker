@@ -16,6 +16,8 @@ body {
     --bkg-color: var(--bkg-color-light);
     --bkg-color-inverted: var(--bkg-color-inverted-light);
     --bkg-color-nuance: var(--bkg-color-nuance-light);
+    --visible-light: inline;
+    --visible-dark: none;
 }
 
 body.dark-theme {
@@ -24,22 +26,8 @@ body.dark-theme {
     --bkg-color: var(--bkg-color-dark);
     --bkg-color-inverted: var(--bkg-color-inverted-dark);
     --bkg-color-nuance: var(--bkg-color-nuance-dark);
-}
-
-.scheme-toogle .light {
-    --toogle-light-img: block;
-}
-
-.scheme-toogle .dark {
-    --toogle-dark-img: none;
-}
-
-body.dark-theme .scheme-toogle .dark {
-    --toogle-dark-img: block;
-}
-
-body.dark-theme .scheme-toogle .light {
-    --toogle-light-img: none;
+    --visible-light: none;
+    --visible-dark: inline;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -50,6 +38,8 @@ body.dark-theme .scheme-toogle .light {
         --bkg-color: var(--bkg-color-dark);
         --bkg-color-inverted: var(--bkg-color-inverted-dark);
         --bkg-color-nuance: var(--bkg-color-nuance-dark);
+        --visible-light: none;
+        --visible-dark: inline;
     }
 
     body.light-theme {
@@ -58,24 +48,32 @@ body.dark-theme .scheme-toogle .light {
         --bkg-color: var(--bkg-color-light);
         --bkg-color-inverted: var(--bkg-color-inverted-light);
         --bkg-color-nuance: var(--bkg-color-nuance-light);
+        --visible-light: inline;
+        --visible-dark: none;
     }
 
-    .scheme-toogle .light {
-        --toogle-light-img: none;
-    }
+}
 
-    .scheme-toogle .dark {
-        --toogle-dark-img: block;
-    }
+.icons8 svg {
+    width: 1.2em;
+    height: 1.2em;
+}
 
-    body.light-theme .scheme-toogle .dark {
-        --toogle-dark-img: none;
-    }
+.scheme-toggle svg {
+    width: 3em;
+    height: 3em;
+}
 
-    body.light-theme .scheme-toogle .light {
-        --toogle-light-img: block;
-    }
+.scheme-toggle .moon {
+    display: var(--visible-dark);
+}
 
+.scheme-toggle .sun {
+    display: var(--visible-light);
+}
+
+.scheme-toggle .icon, .icons8 .icon {
+    fill: var(--text-color);
 }
 
 body, input {
@@ -83,7 +81,7 @@ body, input {
 }
 
 body {
-    margin: 0em;
+    margin: 0;
 }
 
 * {
@@ -92,15 +90,7 @@ body {
     transition: color .5s, background .5s;
 }
 
-.scheme-toogle .light {
-    display: var(--toogle-light-img);
-}
-
-.scheme-toogle .dark {
-    display: var(--toogle-dark-img);
-}
-
-.scheme-toogle {
+.scheme-toggle {
     float: right;
     cursor: pointer;
     margin-right: 2.5em;
@@ -125,9 +115,17 @@ button {
     color: var(--text-color-inverted);
 }
 
+button span {
+    color: var(--text-color-inverted);
+}
+
 button:hover {
     cursor: pointer;
     background: var(--bkg-color);
+    color: var(--text-color);
+}
+
+button:hover span {
     color: var(--text-color);
 }
 
@@ -135,6 +133,20 @@ button:disabled {
     background: var(--bkg-color-nuance);
     color: var(--text-color);
     cursor: default;
+}
+
+button svg {
+    margin: -.3em 0;
+    width: 1.2em;
+    height: 1.2em;
+}
+
+button .icon {
+    fill: var(--text-color-inverted);
+}
+
+button:hover .icon {
+    fill: var(--text-color);
 }
 
 main {
@@ -196,10 +208,15 @@ h2 {
         padding: 1.5em 1.5em;
     }
 
-    .scheme-toogle {
+    .scheme-toggle {
         margin-right: 0;
     }
 
+    button span {
+        display: none;
+    }
+
+    /*
     button, select {
         width: 100%;
     }
@@ -207,5 +224,6 @@ h2 {
     input {
         width: calc(100% - 1em);
     }
+    */
 
 }

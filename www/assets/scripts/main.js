@@ -1,7 +1,8 @@
-const btn = document.querySelector(".scheme-toogle");
+const btn = document.querySelector(".scheme-toggle");
 const selectCards = document.querySelector("#cards");
-const inputsUserName = document.querySelectorAll("#member-enter,#member-start");
+const inputsUserName = document.querySelectorAll("#member-start,#member-enter");
 const inputSessionId = document.querySelector("#session-id");
+const inputsSessionPassword = document.querySelectorAll("#session-password-start,#session-password-enter");
 const divStartSession = document.querySelector(".start-session");
 const divEnterSession = document.querySelector(".enter-session");
 const divSession = document.querySelector(".session");
@@ -11,11 +12,13 @@ const btnEnterSession = document.querySelector("#btn-enter");
 const btnReveal = document.querySelector("#btn-reveal");
 const btnNewVote = document.querySelector("#btn-new-vote");
 const btnQrcode = document.querySelector("#btn-qrcode");
+const divMainError = document.querySelector(".main-error");
 const pErrorStart = document.querySelector(".start-session .error");
 const pErrorEnter = document.querySelector(".enter-session .error");
 const pErrorSession = document.querySelector(".session .error");
 const pSessionLink = document.querySelector("#session-link");
 const pUsers = document.querySelector("#users");
+const divOwnerButtons = [btnReveal, btnNewVote, btnQrcode];
 
 const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
 
@@ -26,9 +29,12 @@ const currentCards = localStorage.getItem("cards");
 const currentUsername = localStorage.getItem("username");
 
 window.addEventListener("DOMContentLoaded", function () {
-    divSession.style.display = "none";
+    divMainError.style.display = "none";
+    divStartSession.style.display = "block";
+    inputsSessionPassword[1].parentElement.style.display = "none";
     loadUsername();
     loadSessionId();
+    loadCards();
 });
 
 btn.addEventListener("click", function () {
@@ -62,10 +68,11 @@ inputsUserName.forEach(
 function loadSessionId() {
     if (document.URL.match(/.+\/[a-z0-9]{6}$/)) {
         inputSessionId.value = document.URL.replace(/.+\/([a-z0-9]{6})$/, '$1');
-        divStartSession.style.display = "none";
-    } else {
-        divEnterSession.style.display = "none";
-        loadCards();
+        apiFetch("/api/sessions/" + inputSessionId.value, "GET", pErrorSession, function (data) {
+            if (data.has_password === true) inputsSessionPassword[1].parentElement.style.display = "block";
+            divStartSession.style.display = "none";
+            divEnterSession.style.display = "block";
+        });
     }
 }
 
@@ -81,12 +88,13 @@ function loadUsername() {
 
 function apiFetch(route, method, pErrorElement, success, payload = null, token = null) {
     pErrorElement.innerHTML = "";
+    let headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+    };
+    if (token !== null) headers['token'] = token;
     fetch(route, {
-        headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-            "token": token
-        },
+        headers: headers,
         method: method,
         body: payload === null ? null : JSON.stringify(payload)
     })
@@ -124,23 +132,37 @@ function loadCards() {
     })
 }
 
+// start session
 btnStartSession.addEventListener("click", function () {
+    let payload = {user: {name: inputsUserName[0].value}}
+    if (inputsSessionPassword[0].value !== "") {
+        payload['session'] = {'password': inputsSessionPassword[0].value};
+    }
     apiFetch("/api/sessions", "POST", pErrorStart, function (data) {
         openSession(data);
-    }, {user: {name: inputsUserName[0].value}});
+    }, payload);
 });
 
+// enter session
 btnEnterSession.addEventListener("click", function () {
+    let payload = {user: {name: inputsUserName[1].value}}
+    if (inputsSessionPassword[1].value !== "") {
+        payload['session'] = {'password': inputsSessionPassword[1].value};
+    }
     apiFetch("/api/sessions/" + inputSessionId.value + "/users", "POST", pErrorEnter, function (data) {
         openSession(data);
-    }, {user: {name: inputsUserName[1].value}});
+    }, payload);
 });
 
 function openSession(session) {
+    divOwnerButtons.forEach(function (btn) {
+        btn.style.display = "none";
+    });
     divWelcome.style.display = "none";
     divSession.style.display = "block";
     refreshSession(session);
     setSessionLink();
+    setOwnerButtons();
     window.setInterval(function () {
         apiFetch("/api/sessions/" + window.session.session, "GET", pErrorSession, function (data) {
             refreshSession(data);
@@ -156,11 +178,18 @@ function refreshSession(session) {
 
 function setSessionLink() {
     const link = document.URL.replace(/\/$/, "").replace(/\/[a-z0-9]{6}$/, "") + "/" + window.session.session;
-    pSessionLink.innerHTML = 'session-link: <a href="' + link + '">' + link + '</a>'
+    pSessionLink.innerHTML = 'session: <a href="' + link + '">' + link + '</a>'
+}
+
+function setOwnerButtons() {
+    if (window.session.owner === window.session.user_id) {
+        divOwnerButtons.forEach(function (btn) {
+            btn.style.display = "inline";
+        });
+    }
 }
 
 function setUsers() {
-    let strUsers = "users: ";
     let arrUsers = [];
     for (const [key, value] of Object.entries(window.session.users)) {
         let name = '<div class="' + (value.alive ? 'online' : 'offline') + '"></div>' + value.name
@@ -169,6 +198,5 @@ function setUsers() {
         }
         arrUsers.push(name);
     }
-    strUsers += arrUsers.join(" ");
-    pUsers.innerHTML = strUsers;
+    pUsers.innerHTML = arrUsers.join(" ");
 }

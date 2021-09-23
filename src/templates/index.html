@@ -1,6 +1,7 @@
 <main>
+    <div class="error main-error">Sorry.. please use a modern browser for this page.</div>
     <div class="welcome">
-        <div class="start-session">
+        <div class="start-session" style="display:none;">
             <h3>Start a new Session</h3>
             <p>
                 <label for="member-start">username</label><br>
@@ -11,11 +12,15 @@
                 <select id="cards"></select>
             </p>
             <p>
+                <label for="session-password-start">(optional) session password</label><br>
+                <input type="password" placeholder="password" id="session-password-start"/>
+            </p>
+            <p>
                 <button id="btn-start">start session</button>
             </p>
             <p class="error"></p>
         </div>
-        <div class="enter-session">
+        <div class="enter-session" style="display:none;">
             <h3>Enter a Session</h3>
             <p>
                 <label for="member-enter">username</label><br>
@@ -26,17 +31,74 @@
                 <input type="text" placeholder="session id" id="session-id"/>
             </p>
             <p>
+                <label for="session-password-enter">session has a password</label><br>
+                <input type="password" placeholder="password" id="session-password-enter"/>
+            </p>
+            <p>
                 <button id="btn-enter">enter session</button>
             </p>
             <p class="error"></p>
         </div>
     </div>
-    <div class="session">
+    <div class="session" style="display:none;">
         <p id="session-link"></p>
         <p id="users"></p>
-        <button id="btn-reveal">reveal</button>
-        <button id="btn-new-vote">new vote</button>
-        <button id="btn-qrcode">qrcode</button>
+        <button id="btn-reveal">
+            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 172 172">
+                <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt"
+                   stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0"
+                   font-family="none" font-weight="none" font-size="none" text-anchor="none"
+                   style="mix-blend-mode: normal">
+                    <path d="M0,172v-172h172v172z" fill="none"></path>
+                    <g class="icon">
+                        <path d="M86,28.66667c-57.33333,0 -78.83333,57.33333 -78.83333,57.33333c0,0 21.5,57.33333 78.83333,57.33333c57.33333,0 78.83333,-57.33333 78.83333,-57.33333c0,0 -21.5,-57.33333 -78.83333,-57.33333zM86,50.16667c19.78717,0 35.83333,16.04617 35.83333,35.83333c0,19.78717 -16.04617,35.83333 -35.83333,35.83333c-19.78717,0 -35.83333,-16.04617 -35.83333,-35.83333c0,-19.78717 16.04617,-35.83333 35.83333,-35.83333zM86,64.5c-11.87412,0 -21.5,9.62588 -21.5,21.5c0,11.87412 9.62588,21.5 21.5,21.5c11.87412,0 21.5,-9.62588 21.5,-21.5c0,-11.87412 -9.62588,-21.5 -21.5,-21.5z"></path>
+                    </g>
+                </g>
+            </svg>
+            <span>uncover</span>
+        </button>
+        <button id="btn-new-vote">
+            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 172 172">
+                <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt"
+                   stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0"
+                   font-family="none" font-weight="none" font-size="none" text-anchor="none"
+                   style="mix-blend-mode: normal">
+                    <path d="M0,172v-172h172v172z" fill="none"></path>
+                    <g class="icon">
+                        <path d="M35.83333,21.5c-7.83362,0 -14.33333,6.49972 -14.33333,14.33333v100.33333c0,7.83362 6.49972,14.33333 14.33333,14.33333h100.33333c7.83362,0 14.33333,-6.49972 14.33333,-14.33333v-100.33333c0,-7.83362 -6.49972,-14.33333 -14.33333,-14.33333zM35.83333,35.83333h100.33333v100.33333h-100.33333zM78.83333,50.16667v28.66667h-28.66667v14.33333h28.66667v28.66667h14.33333v-28.66667h28.66667v-14.33333h-28.66667v-28.66667z"></path>
+                    </g>
+                </g>
+            </svg>
+            <span>new vote</span>
+        </button>
+        <button id="btn-qrcode">
+            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 172 172">
+                <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt"
+                   stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0"
+                   font-family="none" font-weight="none" font-size="none" text-anchor="none"
+                   style="mix-blend-mode: normal">
+                    <path d="M0,172v-172h172v172z" fill="none"></path>
+                    <g class="icon">
+                        <path d="M21.5,21.5v43h43v-43zM78.83333,21.5v14.33333h14.33333v-14.33333zM107.5,21.5v43h43v-43zM35.83333,35.83333h14.33333v14.33333h-14.33333zM121.83333,35.83333h14.33333v14.33333h-14.33333zM78.83333,50.16667v14.33333h14.33333v-14.33333zM21.5,78.83333v14.33333h14.33333v-14.33333zM50.16667,78.83333v14.33333h14.33333v-14.33333zM78.83333,78.83333v14.33333h14.33333v-14.33333zM93.16667,93.16667v14.33333h14.33333v-14.33333zM107.5,93.16667h14.33333v-14.33333h-14.33333zM121.83333,93.16667v14.33333h14.33333v-14.33333zM136.16667,93.16667h14.33333v-14.33333h-14.33333zM136.16667,107.5v14.33333h14.33333v-14.33333zM136.16667,121.83333h-14.33333v14.33333h14.33333zM136.16667,136.16667v14.33333h14.33333v-14.33333zM121.83333,136.16667h-14.33333v14.33333h14.33333zM107.5,136.16667v-14.33333h-14.33333v14.33333zM93.16667,136.16667h-14.33333v14.33333h14.33333zM93.16667,121.83333v-14.33333h-14.33333v14.33333zM107.5,121.83333h14.33333v-14.33333h-14.33333zM21.5,107.5v43h43v-43zM35.83333,121.83333h14.33333v14.33333h-14.33333z"></path>
+                    </g>
+                </g>
+            </svg>
+            <span>qrcode</span>
+        </button>
+        <button id="exit">
+            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 226 226">
+                <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt"
+                   stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0"
+                   font-family="none" font-weight="none" font-size="none" text-anchor="none"
+                   style="mix-blend-mode: normal">
+                    <path d="M0,226v-226h226v226z" fill="none"></path>
+                    <g class="icon">
+                        <path d="M113,22.6c-49.83651,0 -90.4,40.56349 -90.4,90.4c0,49.83651 40.56349,90.4 90.4,90.4c19.24709,0 37.03914,-6.1666 51.62982,-16.43503c3.40482,-2.39313 4.22496,-7.09329 1.83183,-10.49811c-2.39313,-3.40482 -7.09329,-4.22496 -10.49811,-1.83183c-12.21292,8.59504 -26.92449,13.6983 -42.96354,13.6983c-41.69349,0 -75.33333,-33.63984 -75.33333,-75.33333c0,-41.69349 33.63985,-75.33333 75.33333,-75.33333c16.03905,0 30.75062,5.10327 42.96354,13.69831c3.40482,2.39313 8.10499,1.57299 10.49811,-1.83183c2.39313,-3.40482 1.57299,-8.10499 -1.83183,-10.49811c-14.59068,-10.26843 -32.38273,-16.43503 -51.62982,-16.43503zM173.1931,75.25977c-3.06549,0.00081 -5.82484,1.85889 -6.97836,4.69907c-1.15352,2.84018 -0.47118,6.09608 1.72563,8.23413l17.2737,17.2737h-79.7474c-2.71679,-0.03842 -5.24381,1.38896 -6.61342,3.73558c-1.36961,2.34661 -1.36961,5.2489 0,7.59552c1.36961,2.34661 3.89663,3.774 6.61342,3.73558h79.7474l-17.2737,17.2737c-1.96801,1.88948 -2.76078,4.69528 -2.07256,7.33527c0.68822,2.64 2.74989,4.70167 5.38989,5.38989c2.64,0.68822 5.44579,-0.10455 7.33527,-2.07256l29.47123,-29.47122c1.87084,-1.42713 2.96747,-3.64639 2.96458,-5.99942c-0.00289,-2.35303 -1.10496,-4.56958 -2.9793,-5.99212l-29.45652,-29.45651c-1.41831,-1.45795 -3.36586,-2.28048 -5.39987,-2.2806z"></path>
+                    </g>
+                </g>
+            </svg>
+            <span>exit</span>
+        </button>
         <p class="error"></p>
     </div>
 </main>
