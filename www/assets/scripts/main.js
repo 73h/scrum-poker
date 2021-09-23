@@ -9,16 +9,18 @@ const divSession = document.querySelector(".session");
 const divWelcome = document.querySelector(".welcome");
 const btnStartSession = document.querySelector("#btn-start");
 const btnEnterSession = document.querySelector("#btn-enter");
-const btnReveal = document.querySelector("#btn-reveal");
+const btnUncover = document.querySelector("#btn-uncover");
 const btnNewVote = document.querySelector("#btn-new-vote");
 const btnQrcode = document.querySelector("#btn-qrcode");
+const btnFullscreen = document.querySelector("#btn-fullscreen");
+const btnExit = document.querySelector("#btn-exit");
 const divMainError = document.querySelector(".main-error");
 const pErrorStart = document.querySelector(".start-session .error");
 const pErrorEnter = document.querySelector(".enter-session .error");
 const pErrorSession = document.querySelector(".session .error");
 const pSessionLink = document.querySelector("#session-link");
 const pUsers = document.querySelector("#users");
-const divOwnerButtons = [btnReveal, btnNewVote, btnQrcode];
+const divOwnerButtons = [btnUncover, btnNewVote, btnQrcode];
 
 const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
 

@@ -94,12 +94,12 @@ class Session
     public function addVote(): void
     {
         $last_vote = $this->getCurrentVote();
-        if ($last_vote === null || $last_vote->revealed !== null) {
+        if ($last_vote === null || $last_vote->uncovered !== null) {
             $votes = (object)[];
             $this->votes->{strval(count(get_object_vars($this->votes)) + 1)} = (object)[
                 'started' => time(),
                 'votes' => $votes,
-                'revealed' => null,
+                'uncovered' => null,
                 'card_set' => $this->card_set
             ];
         }

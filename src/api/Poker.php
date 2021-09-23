@@ -258,7 +258,7 @@ class Poker
             throw new NotFoundException('vote not found');
         }
         $vote = $this->session->votes->{$vote_id};
-        if ($vote->revealed !== null) {
+        if ($vote->uncovered !== null) {
             throw new ForbiddenException('vote is already closed');
         }
         $card_set = Cards::allCards()->{$vote->card_set};
@@ -276,17 +276,17 @@ class Poker
      * @throws ForbiddenException
      * @throws NotFoundException
      */
-    public function revealVote(string $vote_id): void
+    public function uncoverVoting(string $vote_id): void
     {
         if ($this->userIsOwner()) {
             if (!property_exists($this->session->votes, $vote_id)) {
                 throw new NotFoundException('vote not found');
             }
             $vote = $this->session->votes->{$vote_id};
-            if ($vote->revealed !== null) {
+            if ($vote->uncovered !== null) {
                 throw new ForbiddenException('vote is already closed');
             }
-            $vote->revealed = time();
+            $vote->uncovered = time();
             $this->saveSession();
         }
     }
@@ -303,7 +303,7 @@ class Poker
                 return strval($key);
             }, array_keys(get_object_vars($current_vote->votes)));
             $votes = null;
-            if ($current_vote->revealed !== null) {
+            if ($current_vote->uncovered !== null) {
                 $votes = (object)[];
                 foreach ($current_vote->votes as $user_id => $vote) {
                     $voted = (new DateTime)->setTimestamp($vote->voted)->format(DATE_ATOM);
@@ -315,13 +315,13 @@ class Poker
             }
             // $started = (new DateTime('now', new DateTimeZone('Europe/Berlin')))->setTimestamp($current_vote->started);
             $started = (new DateTime)->setTimestamp($current_vote->started)->format(DATE_ATOM);
-            $revealed = null;
-            if (($current_vote->revealed !== null)) {
-                $revealed = (new DateTime)->setTimestamp($current_vote->revealed)->format(DATE_ATOM);
+            $uncovered = null;
+            if (($current_vote->uncovered !== null)) {
+                $uncovered = (new DateTime)->setTimestamp($current_vote->uncovered)->format(DATE_ATOM);
             }
             $current_vote_response = (object)[
                 'key' => $this->session->getCurrentVoteKey(),
-                'revealed' => $revealed,
+                'uncovered' => $uncovered,
                 'started' => $started,
                 'votes' => $votes,
                 'user_voted' => $user_voted

@@ -49,14 +49,14 @@ class Api extends Request
                 $this->sendOk('voted');
             }, Structures::vote(), (object)['token' => (object)['required' => true]]);
 
-            // reveal vote
+            // uncover vote
             $this->put('sessions/<session>/votes/<vote>', function ($session_id, $vote_id, $data, $headers) {
                 $poker = new Poker(session_id: $session_id);
                 $poker->validateToken($headers->token);
                 $message = [];
-                if ($data->task == 'reveal') {
-                    $poker->revealVote($vote_id);
-                    $message[] = 'vote revealed';
+                if ($data->task == 'uncover') {
+                    $poker->uncoverVoting($vote_id);
+                    $message[] = 'voting uncovered';
                 }
                 $this->sendOk(implode(', ', $message));
             }, Structures::vote_put(), (object)['token' => (object)['required' => true]]);
