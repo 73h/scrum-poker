@@ -1,5 +1,6 @@
 const btn = document.querySelector(".scheme-toggle");
 const selectCardSet = document.querySelector("#card-set");
+const spanCardSetDetails = document.querySelector("#card-set-details");
 const inputsUserName = document.querySelectorAll("#member-start,#member-enter");
 const inputSessionId = document.querySelector("#session-id");
 const inputsSessionPassword = document.querySelectorAll("#session-password-start,#session-password-enter");
@@ -26,7 +27,8 @@ const svgCard = document.querySelector("#card");
 const svgCafe = document.querySelector("#cafe");
 const svgUserVoted = document.querySelector("#user-voted");
 const svgUserNotDone = document.querySelector("#user-not-done");
-const pUserVotings = document.querySelector("#user-votings");
+const svgOnline = document.querySelector("#online");
+const svgOffline = document.querySelector("#offline");
 
 const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
 
@@ -122,23 +124,32 @@ function apiFetch(route, method, pErrorElement, success, payload = null, token =
         });
 }
 
+// load cards
 function loadCards() {
     apiFetch("/api/cards", "GET", pErrorStart, function (data) {
+        window.card_sets = data;
         for (const [cards_key, cards_value] of Object.entries(data)) {
             const cards = document.createElement("option");
             cards.value = cards_key;
-            const cards_text = [];
-            for (const [card_key, card_value] of Object.entries(cards_value)) {
-                cards_text.push(card_value.value);
-            }
-            cards.text = cards_key + " (" + cards_text.join(",") + ")";
+            cards.text = cards_key;
             selectCardSet.add(cards);
             if (currentCards === cards_key) {
                 selectCardSet.value = currentCards;
             }
         }
+        showCardSetDetails();
     })
 }
+
+function showCardSetDetails() {
+    const cards_text = [];
+    for (const [card_key, card_value] of Object.entries(window.card_sets[selectCardSet.value])) {
+        cards_text.push(card_value.value);
+    }
+    spanCardSetDetails.innerHTML = "(" + cards_text.join(" ") + ")";
+}
+
+selectCardSet.addEventListener("change", showCardSetDetails);
 
 // start session
 btnStartSession.addEventListener("click", function () {
@@ -186,16 +197,15 @@ function refreshSession() {
 
 function handleSession(session) {
     window.session = session;
-    setUsers();
-    setUserCards();
-    handleButtons();
-    setUserVotings();
     console.log(window.session);
+    handleButtons();
+    setUserCards();
+    setUsers();
 }
 
 function setSessionLink(session) {
     const link = document.URL.replace(/\/$/, "").replace(/\/[a-z0-9]{6}$/, "") + "/" + session.session;
-    pSessionLink.innerHTML = 'session: <a href="' + link + '">' + link + '</a>'
+    pSessionLink.innerHTML = '<a href="' + link + '">' + link + '</a>'
 }
 
 function setOwnerButtons(session) {
@@ -206,34 +216,19 @@ function setOwnerButtons(session) {
     }
 }
 
-function setUsers() {
-    let arrUsers = [];
-    for (const [key, value] of Object.entries(window.session.users)) {
-        let name = '<div class="' + (value.alive ? 'online' : 'offline') + '"></div>' + value.name
-        if (key === window.session.owner) {
-            name += '<span class="small">(owner)</span>';
-        }
-        arrUsers.push(name);
-    }
-    pUsers.innerHTML = arrUsers.join(" ");
-}
-
 function setUserCards() {
     pUserCards.innerHTML = "";
     Object.entries(window.card_set).forEach(function (card) {
         let newCard = svgCard.cloneNode(true);
-        newCard.style.display = "inline-block";
-        if (window.session.current_vote.your_vote !== null && card[0] === window.session.current_vote.your_vote.card) {
+        if (window.session.users[window.session.user_id].vote === card[0]) {
             newCard.classList.add("selected");
         }
         if (card[1].value === "break") {
             let newCafe = svgCafe.cloneNode(true);
-            newCafe.style.display = "inline-block";
             newCard.append(newCafe);
         } else {
             let span = newCard.querySelector("span");
             span.innerHTML = card[1].value;
-            span.classList.add(card[1].complexity.toLowerCase());
             if (card[1].value.length === 2) {
                 span.style.left = 0.21 + "em";
             }
@@ -243,10 +238,8 @@ function setUserCards() {
                 span.style.fontSize = 1.5 + "em";
             }
         }
-        newCard.querySelectorAll("svg g g path").forEach(function (path) {
-            path.classList.add(card[1].complexity.toLowerCase());
-        });
-        newCard.addEventListener("click", function () {
+        newCard.querySelector("svg g g path.background").classList.add(card[1].complexity.toLowerCase());
+        newCard.querySelector(".click").addEventListener("click", function () {
             let payload = {"card": card[0]};
             apiFetch("/api/sessions/" + window.session.session + "/votes/" + window.session.current_vote.key, "POST", pErrorSession, function () {
                 refreshSession();
@@ -257,7 +250,7 @@ function setUserCards() {
 }
 
 function handleButtons() {
-    if (window.session.current_vote.uncovered) {
+    if (window.session.current_vote.uncovered !== null) {
         btnNewVote.disabled = false;
         btnUncover.disabled = true;
     } else {
@@ -280,27 +273,33 @@ btnNewVote.addEventListener("click", function () {
     }, null, window.session.token);
 });
 
-function setUserVotings() {
-    pUserVotings.innerHTML = "";
+function setUsers() {
+    pUsers.innerHTML = ""
+    let arrUsers = [];
+    for (const [key, value] of Object.entries(window.session.users)) {
+        let name = '<div class="' + (value.alive ? 'online' : 'offline') + '"></div>' + value.name
+        if (key === window.session.owner) {
+            name += '<span class="small">(owner)</span>';
+        }
+        arrUsers.push(name);
+    }
+
     for (const [key, value] of Object.entries(window.session.users)) {
         let divUser = document.createElement("div");
-        divUser.classList.add("user-voting");
-        if (window.session.current_vote.user_voted.includes(key)) {
-            voted = svgUserVoted.cloneNode(true);
-            voted.style.display = "inline-block";
-            divUser.append(voted);
-        } else {
-            notVote = svgUserNotDone.cloneNode(true);
-            notVote.style.display = "inline-block";
-            divUser.append(notVote);
-        }
+        divUser.classList.add("user");
+        //divUser.append(value.alive ? svgOnline.cloneNode(true) : svgOffline.cloneNode(true));
+        divUser.append(value.voted ? svgUserVoted.cloneNode(true) : svgUserNotDone.cloneNode(true));
         divUser.append(value.name);
-        if (window.session.current_vote.votes !== null) {
-            if (window.session.current_vote.votes.hasOwnProperty(key)) {
-                card = window.card_set[window.session.current_vote.votes[key].card].value;
-                divUser.append(" ... " + card);
+        if (!value.alive) {
+            divUser.append(" ")
+            divUser.append(svgOffline.cloneNode(true));
+        }
+        pUsers.append(divUser);
+        if (window.session.current_vote.uncovered !== null) {
+            if (window.session.current_vote.votes !== null && value.vote !== null) {
+                divUser.append(" ........ " + window.card_set[value.vote].value);
             }
         }
-        pUserVotings.append(divUser);
     }
+
 }

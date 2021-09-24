@@ -141,11 +141,19 @@ class Poker
     private function getUserNames(): object
     {
         $users = (object)[];
+        $current_vote = $this->session->getCurrentVote();
         foreach (get_object_vars($this->session->users) as $key => $user) {
             $user_alive_time = file_get_contents($this->getUserSessionAlivePath($key));
+            $user_voted = property_exists($current_vote->votes, $key);
+            $user_vote = null;
+            if (property_exists($current_vote->votes, $key) && ($current_vote->uncovered || $key == $this->current_user_id)) {
+                $user_vote = $current_vote->votes->{$key}->card;
+            }
             $users->{$key} = (object)[
                 'name' => $user->name,
-                'alive' => (time() - $user_alive_time < 3)
+                'alive' => (time() - $user_alive_time < 3),
+                'voted' => $user_voted,
+                'vote' => $user_vote
             ];
         }
         return $users;
@@ -299,37 +307,15 @@ class Poker
         $current_vote = $this->session->getCurrentVote();
         $current_vote_response = null;
         if ($current_vote !== null) {
-            $user_voted = array_map(function ($key) {
-                return strval($key);
-            }, array_keys(get_object_vars($current_vote->votes)));
-            $votes = null;
-            if ($current_vote->uncovered !== null) {
-                $votes = (object)[];
-                foreach ($current_vote->votes as $user_id => $vote) {
-                    $voted = (new DateTime)->setTimestamp($vote->voted)->format(DATE_ATOM);
-                    $votes->{$user_id} = (object)[
-                        'card' => $vote->card,
-                        'voted' => $voted
-                    ];
-                }
-            }
-            // $started = (new DateTime('now', new DateTimeZone('Europe/Berlin')))->setTimestamp($current_vote->started);
             $started = (new DateTime)->setTimestamp($current_vote->started)->format(DATE_ATOM);
             $uncovered = null;
             if (($current_vote->uncovered !== null)) {
                 $uncovered = (new DateTime)->setTimestamp($current_vote->uncovered)->format(DATE_ATOM);
             }
-            $your_vote = null;
-            if (property_exists($current_vote->votes, $this->current_user_id)) {
-                $your_vote = (object)['card' => $current_vote->votes->{$this->current_user_id}->card];
-            }
             $current_vote_response = (object)[
                 'key' => $this->session->getCurrentVoteKey(),
                 'uncovered' => $uncovered,
                 'started' => $started,
-                'votes' => $votes,
-                'user_voted' => $user_voted,
-                'your_vote' => $your_vote
             ];
         }
         return (object)[

@@ -16,6 +16,22 @@ class Cards
             '6' => new Card('13', Card::MIDDLE),
             '7' => new Card('20', Card::HIGH),
             '8' => new Card('40', Card::HIGH),
+            '9' => new Card('?', Card::UNKNOWN),
+            '10' => new Card('break', Card::UNKNOWN),
+        ];
+    }
+
+    public static function default_100(): object
+    {
+        return (object)[
+            '1' => new Card('1', Card::LOW),
+            '2' => new Card('2', Card::LOW),
+            '3' => new Card('3', Card::LOW),
+            '4' => new Card('5', Card::MIDDLE),
+            '5' => new Card('8', Card::MIDDLE),
+            '6' => new Card('13', Card::MIDDLE),
+            '7' => new Card('20', Card::HIGH),
+            '8' => new Card('40', Card::HIGH),
             '9' => new Card('100', Card::HIGH),
             '10' => new Card('?', Card::UNKNOWN),
             '11' => new Card('break', Card::UNKNOWN),
@@ -27,7 +43,7 @@ class Cards
         return (object)[
             '1' => new Card('1', Card::LOW),
             '2' => new Card('2', Card::LOW),
-            '3' => new Card('3', Card::MIDDLE),
+            '3' => new Card('3', Card::LOW),
             '4' => new Card('5', Card::MIDDLE),
             '5' => new Card('8', Card::MIDDLE),
             '6' => new Card('13', Card::HIGH),
@@ -37,7 +53,7 @@ class Cards
         ];
     }
 
-    public static function fibonacci_ext(): object
+    public static function fibonacci_144(): object
 
     {
         return (object)[
@@ -103,8 +119,9 @@ class Cards
     {
         return (object)[
             'default' => self::default(),
+            'default_100' => self::default_100(),
             'fibonacci' => self::fibonacci(),
-            'fibonacci_ext' => self::fibonacci_ext(),
+            'fibonacci_144' => self::fibonacci_144(),
             'smilies' => self::smilies(),
             'sizes' => self::sizes(),
             'school' => self::school()
