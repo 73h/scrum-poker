@@ -100,7 +100,7 @@ body.dark-theme {
     fill: var(--text-color);
 }
 
-body, input {
+input {
     background: var(--bkg-color);
 }
 
@@ -171,7 +171,7 @@ button:disabled {
     display: none !important;
 }
 
-main {
+main, body {
     background: var(--bkg-color-nuance);
 }
 
@@ -185,6 +185,10 @@ header, footer, main {
     padding: 2.5em 0;
 }
 
+header, footer {
+    background: var(--bkg-color);
+}
+
 h1 {
     margin: 0;
 }
@@ -195,14 +199,12 @@ h2 {
 
 .error {
     color: #dd0000;
+    margin: 2em 0;
 }
 
 .online, .offline {
     width: .5em;
     height: .5em;
-    border-radius: .5em;
-    display: inline-block;
-    margin-right: .3em;
 }
 
 .online {
@@ -277,20 +279,24 @@ h2 {
     left: .37em;
 }
 
-#user-cards .low {
+.low {
     fill: var(--low);
+    color: var(--low);
 }
 
-#user-cards .middle {
+.middle {
     fill: var(--middle);
+    color: var(--middle);
 }
 
-#user-cards .high {
+.high {
     fill: var(--high);
+    color: var(--high);
 }
 
-#user-cards .unknown {
+.unknown {
     fill: var(--unknown);
+    color: var(--unknown);
 }
 
 #user-cards div svg g g path.border, #user-cards .cafe-svg g g path {
@@ -298,15 +304,27 @@ h2 {
     fill: var(--text-color) !important;
 }
 
-#users .user {
-    margin-top: .5em;
-}
-
 #users svg {
     width: 1.2em;
     height: 1.2em;
     margin-bottom: -.3em;
-    margin-right: .5em;
+}
+
+.users {
+    display: table;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+.user {
+    display: table-row;
+}
+
+.user div {
+    display: table-cell;
+    padding: .4em .2em;
+    border-bottom: dotted 1px var(--text-color);
+    width: auto;
 }
 
 .svg-templates {

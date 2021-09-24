@@ -1,4 +1,4 @@
-const btn = document.querySelector(".scheme-toggle");
+const btnSchemeToggle = document.querySelector(".scheme-toggle");
 const selectCardSet = document.querySelector("#card-set");
 const spanCardSetDetails = document.querySelector("#card-set-details");
 const inputsUserName = document.querySelectorAll("#member-start,#member-enter");
@@ -31,54 +31,27 @@ const svgOnline = document.querySelector("#online");
 const svgOffline = document.querySelector("#offline");
 
 const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
-
 const currentTheme = localStorage.getItem("theme");
 if (currentTheme === "dark") document.body.classList.toggle("dark-theme");
 else if (currentTheme === "light") document.body.classList.toggle("light-theme");
 const currentCards = localStorage.getItem("cards");
 const currentUsername = localStorage.getItem("username");
 
-window.addEventListener("load", function () {
-    divMainError.style.display = "none";
-    divStartSession.style.display = "block";
-    inputsSessionPassword[1].parentElement.style.display = "none";
-    loadUsername();
-    loadSessionId();
-    loadCards();
-});
-
-btn.addEventListener("click", function () {
-    let theme;
-    if (prefersDarkScheme.matches) {
-        document.body.classList.toggle("light-theme");
-        theme = document.body.classList.contains("light-theme")
-            ? "light"
-            : "dark";
-    } else {
-        document.body.classList.toggle("dark-theme");
-        theme = document.body.classList.contains("dark-theme")
-            ? "dark"
-            : "light";
-    }
-    localStorage.setItem("theme", theme);
-});
-
-selectCardSet.addEventListener("change", function () {
-    localStorage.setItem("cards", this.value);
-});
-
-inputsUserName.forEach(
-    function (element) {
-        element.addEventListener("blur", function () {
-            localStorage.setItem("username", this.value);
-        });
-    }
-);
-
 function loadSessionId() {
     if (document.URL.match(/.+\/[a-z0-9]{6}$/)) {
         inputSessionId.value = document.URL.replace(/.+\/([a-z0-9]{6})$/, '$1');
-        apiFetch("/api/sessions/" + inputSessionId.value, "GET", pErrorSession, function (data) {
+        let session = localStorage.getItem('session');
+        if (session !== null) {
+            localStorage.removeItem('session');
+            let payload = JSON.parse(session);
+            inputsUserName[1].value = payload.user.name;
+            if (payload.session.hasOwnProperty("password")) {
+                inputsSessionPassword[1].value = payload.session.password;
+            }
+            enterSession();
+            return;
+        }
+        apiFetch("/api/sessions/" + inputSessionId.value, "GET", pErrorStart, function (data) {
             if (data.has_password === true) inputsSessionPassword[1].parentElement.style.display = "block";
             divStartSession.style.display = "none";
             divEnterSession.style.display = "block";
@@ -124,7 +97,6 @@ function apiFetch(route, method, pErrorElement, success, payload = null, token =
         });
 }
 
-// load cards
 function loadCards() {
     apiFetch("/api/cards", "GET", pErrorStart, function (data) {
         window.card_sets = data;
@@ -149,29 +121,6 @@ function showCardSetDetails() {
     spanCardSetDetails.innerHTML = "(" + cards_text.join(" ") + ")";
 }
 
-selectCardSet.addEventListener("change", showCardSetDetails);
-
-// start session
-btnStartSession.addEventListener("click", function () {
-    let payload = {user: {name: inputsUserName[0].value}, session: {card_set: selectCardSet.value}}
-    if (inputsSessionPassword[0].value !== "") {
-        payload['session']['password'] = inputsSessionPassword[0].value;
-    }
-    apiFetch("/api/sessions", "POST", pErrorStart, function (data) {
-        openSession(data);
-    }, payload);
-});
-
-// enter session
-btnEnterSession.addEventListener("click", function () {
-    let payload = {user: {name: inputsUserName[1].value}}
-    if (inputsSessionPassword[1].value !== "") {
-        payload['session'] = {'password': inputsSessionPassword[1].value};
-    }
-    apiFetch("/api/sessions/" + inputSessionId.value + "/users", "POST", pErrorEnter, function (data) {
-        openSession(data);
-    }, payload);
-});
 
 function openSession(session) {
     divOwnerButtons.forEach(function (btn) {
@@ -196,11 +145,12 @@ function refreshSession() {
 }
 
 function handleSession(session) {
-    window.session = session;
-    console.log(window.session);
-    handleButtons();
-    setUserCards();
-    setUsers();
+    if (JSON.stringify(window.session) !== JSON.stringify(session)) {
+        window.session = session;
+        handleButtons();
+        setUserCards();
+        setUsers();
+    }
 }
 
 function setSessionLink(session) {
@@ -240,9 +190,13 @@ function setUserCards() {
         }
         newCard.querySelector("svg g g path.background").classList.add(card[1].complexity.toLowerCase());
         newCard.querySelector(".click").addEventListener("click", function () {
+            let diVCard = this.parentElement;
             let payload = {"card": card[0]};
             apiFetch("/api/sessions/" + window.session.session + "/votes/" + window.session.current_vote.key, "POST", pErrorSession, function () {
-                refreshSession();
+                document.querySelectorAll(".card").forEach(function (card) {
+                    card.classList.remove("selected");
+                });
+                diVCard.classList.add("selected");
             }, payload, window.session.token);
         });
         pUserCards.append(newCard);
@@ -259,47 +213,89 @@ function handleButtons() {
     }
 }
 
-btnUncover.addEventListener("click", function () {
-    let payload = {"task": "uncover"};
-    apiFetch("/api/sessions/" + window.session.session + "/votes/" + window.session.current_vote.key, "PUT", pErrorSession, function () {
-        refreshSession();
-    }, payload, window.session.token);
-});
-
-btnNewVote.addEventListener("click", function () {
-    let payload = {"task": "uncover"};
-    apiFetch("/api/sessions/" + window.session.session + "/votes", "POST", pErrorSession, function () {
-        refreshSession();
-    }, null, window.session.token);
-});
-
 function setUsers() {
     pUsers.innerHTML = ""
-    let arrUsers = [];
     for (const [key, value] of Object.entries(window.session.users)) {
-        let name = '<div class="' + (value.alive ? 'online' : 'offline') + '"></div>' + value.name
-        if (key === window.session.owner) {
-            name += '<span class="small">(owner)</span>';
-        }
-        arrUsers.push(name);
-    }
-
-    for (const [key, value] of Object.entries(window.session.users)) {
-        let divUser = document.createElement("div");
-        divUser.classList.add("user");
-        //divUser.append(value.alive ? svgOnline.cloneNode(true) : svgOffline.cloneNode(true));
-        divUser.append(value.voted ? svgUserVoted.cloneNode(true) : svgUserNotDone.cloneNode(true));
-        divUser.append(value.name);
+        let divVoted = document.createElement("div");
+        divVoted.append(value.voted ? svgUserVoted.cloneNode(true) : svgUserNotDone.cloneNode(true));
+        let divName = document.createElement("div");
+        divName.innerHTML = value.name;
         if (!value.alive) {
-            divUser.append(" ")
-            divUser.append(svgOffline.cloneNode(true));
+            divName.append(" ")
+            divName.append(svgOffline.cloneNode(true));
         }
-        pUsers.append(divUser);
+        let divVote = document.createElement("div");
         if (window.session.current_vote.uncovered !== null) {
             if (window.session.current_vote.votes !== null && value.vote !== null) {
-                divUser.append(" ........ " + window.card_set[value.vote].value);
+                divVote.classList.add(window.card_set[value.vote].complexity.toLowerCase());
+                divVote.style.paddingLeft = "3em";
+                divVote.style.textAlign = "right";
+                divVote.append(window.card_set[value.vote].value);
             }
         }
+        let divUser = document.createElement("div");
+        divUser.classList.add("user");
+        divUser.append(divVoted);
+        divUser.append(divName);
+        divUser.append(divVote);
+        pUsers.append(divUser);
     }
+    if (window.session.current_vote.uncovered !== null) {
+        let sum = 0;
+        let cnt = 0;
+        Object.values(window.session.users).forEach(function (user) {
+            if (user.vote !== null) {
+                let card = window.card_set[user.vote];
+                if (card.value !== "?" && card.value !== "break") {
+                    cnt++;
+                    sum += parseInt(user.vote, 10);
+                }
+            }
+        });
+        let average = Math.round(sum / cnt);
+        let divAverage = document.createElement("div");
+        divAverage.classList.add("user");
+        let divEmpty = document.createElement("div");
+        let divName = document.createElement("div");
+        divName.innerHTML = "average";
+        let divVote = document.createElement("div");
+        divVote.classList.add(window.card_set[average].complexity.toLowerCase());
+        divVote.style.paddingLeft = "3em";
+        divVote.style.textAlign = "right";
+        divVote.append(window.card_set[average].value);
+        divAverage.append(divEmpty);
+        divAverage.append(divName);
+        divAverage.append(divVote);
+        pUsers.append(divAverage);
+    }
+}
 
+function showEnterSession() {
+    divStartSession.style.display = "none";
+    divEnterSession.style.display = "block";
+}
+
+function startSession() {
+    let payload = {user: {name: inputsUserName[0].value}, session: {card_set: selectCardSet.value}}
+    if (inputsSessionPassword[0].value !== "") {
+        payload['session']['password'] = inputsSessionPassword[0].value;
+    }
+    apiFetch("/api/sessions", "POST", pErrorStart, function (data) {
+        localStorage.setItem("session", JSON.stringify(payload));
+        window.location.replace("/" + data.session);
+    }, payload);
+}
+
+function enterSession() {
+    if (inputSessionId.value === "") {
+        pErrorEnter.innerHTML = "enter a session id";
+        return;
+    }
+    let payload = {user: {name: inputsUserName[1].value}}
+    if (inputsSessionPassword[1].value !== "") {
+        payload['session'] = {'password': inputsSessionPassword[1].value};
+    }
+    apiFetch("/api/sessions/" + inputSessionId.value + "/users", "POST", pErrorEnter, function (data) {
+        openSession(data);
+    }, payload);
 }

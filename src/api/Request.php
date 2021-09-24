@@ -108,7 +108,7 @@ class Request
     private function route(string $route, string $method, callable $callback, ?array $payload_structure = null, ?object $required_headers = null): void
     {
         $route = '^' . str_replace('/', '\/', $route) . '$';
-        $pattern = '/' . preg_replace('/\<[a-z_]+\>/i', '([a-z0-9_-]*)', $route) . '/i';
+        $pattern = '/' . preg_replace('/\<[a-z_]+\>/i', '([a-z0-9_-]+)', $route) . '/i';
         preg_match_all($pattern, $this->route, $matches, PREG_SET_ORDER);
         if (count($matches) > 0 && $this->method === $method) {
             if ($payload_structure !== null && count($payload_structure) > 0 && $this->data === null) {

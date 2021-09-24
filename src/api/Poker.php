@@ -45,9 +45,11 @@ class Poker
         if ($this->session_id === null) {
             $this->generateSessionId();
         }
-        $this->session_path = self::SESSION_BASE_PATH . $this->session_id . '/';
-        if (!is_dir($this->session_path)) {
-            mkdir($this->session_path);
+        if ($this->session_path === null) {
+            $this->session_path = self::SESSION_BASE_PATH . $this->session_id . '/';
+            if (!is_dir($this->session_path)) {
+                mkdir($this->session_path);
+            }
         }
     }
 
@@ -108,12 +110,17 @@ class Poker
         $this->session = new Session($load);
     }
 
+    /**
+     * @throws Exception
+     */
     private function saveSession(): void
     {
-        //file_put_contents($this->getSessionPath(), json_encode($this->session, JSON_PRETTY_PRINT));
         file_put_contents($this->getSessionPath(), json_encode($this->session));
     }
 
+    /**
+     * @throws Exception
+     */
     private function saveUserSessionAlive(): void
     {
         file_put_contents($this->getUserSessionAlivePath($this->current_user_id), time());
@@ -159,6 +166,9 @@ class Poker
         return $users;
     }
 
+    /**
+     * @throws Exception
+     */
     public function validateUserToken(string $token): bool
     {
         foreach (get_object_vars($this->session->users) as $key => $user) {
@@ -176,6 +186,9 @@ class Poker
         return $this->session->token === $token;
     }
 
+    /**
+     * @throws Exception
+     */
     public function setUserPassword(string $password)
     {
         $this->getCurrentUser()->password = password_hash($password, PASSWORD_DEFAULT);
@@ -195,6 +208,7 @@ class Poker
 
     /**
      * @throws ForbiddenException
+     * @throws Exception
      */
     public function setSessionPassword(string $password): void
     {
@@ -247,6 +261,7 @@ class Poker
 
     /**
      * @throws ForbiddenException
+     * @throws Exception
      */
     public function startVote()
     {
@@ -259,6 +274,7 @@ class Poker
     /**
      * @throws ForbiddenException
      * @throws NotFoundException
+     * @throws Exception
      */
     public function vote(string $vote_id, string $card_id): void
     {
@@ -283,6 +299,7 @@ class Poker
     /**
      * @throws ForbiddenException
      * @throws NotFoundException
+     * @throws Exception
      */
     public function uncoverVoting(string $vote_id): void
     {
@@ -297,6 +314,14 @@ class Poker
             $vote->uncovered = time();
             $this->saveSession();
         }
+    }
+
+    public function getBasicSessionResponse(): object
+    {
+        return (object)[
+            'session' => $this->session_id,
+            'has_password' => $this->session->password !== null
+        ];
     }
 
     /**
@@ -326,14 +351,6 @@ class Poker
             'owner' => $this->session->owner,
             'card_set' => $this->session->card_set,
             'current_vote' => $current_vote_response
-        ];
-    }
-
-    public function getBasicSessionResponse(): object
-    {
-        return (object)[
-            'session' => $this->session_id,
-            'has_password' => $this->session->password !== null
         ];
     }
 

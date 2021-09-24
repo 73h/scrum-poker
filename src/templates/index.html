@@ -2,7 +2,7 @@
     <div class="error main-error row">Sorry.. please use a modern browser for this page.</div>
     <div class="welcome row">
         <div class="start-session" style="display:none;">
-            <h3>Start a new Session</h3>
+            <h3>Start a new session</h3>
             <p>
                 <label for="member-start">username</label><br>
                 <input type="text" placeholder="your name" id="member-start"/>
@@ -20,9 +20,11 @@
                 <button id="btn-start">start session</button>
             </p>
             <p class="error"></p>
+            <p>You have a session id and want to enter the session? <a href="javascript:showEnterSession();"
+                                                                       title="enter a session">follow</a></p>
         </div>
         <div class="enter-session" style="display:none;">
-            <h3>Enter a Session</h3>
+            <h3>Enter a session</h3>
             <p>
                 <label for="member-enter">username</label><br>
                 <input type="text" placeholder="your name" id="member-enter"/>
@@ -39,6 +41,7 @@
                 <button id="btn-enter">enter session</button>
             </p>
             <p class="error"></p>
+            <p>Do you want to start a new session? <a href="/" title="start a new session">follow</a></p>
         </div>
     </div>
     <div class="session row" style="display:none;">
