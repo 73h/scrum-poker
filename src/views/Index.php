@@ -17,7 +17,7 @@ class Index extends View
         else $protocol = 'http://';
         $uri = $protocol . $_SERVER['SERVER_NAME'] . '/' . $_GET['session'];
         if (isset($_GET['session'])) {
-            $image_property = 'https://chart.googleapis.com/chart?cht=qr&choe=UTF-8&chld=L|0&chs=250x250&chl=' . $uri;
+            $image_property = 'https://chart.googleapis.com/chart?cht=qr&choe=UTF-8&chld=L|0&chs=250x131&chl=' . $uri;
         } else {
             $image_property = '/assets/images/poker.png';
         }
