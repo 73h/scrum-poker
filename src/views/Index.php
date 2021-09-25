@@ -21,7 +21,6 @@ class Index extends View
         } else {
             $image_property = '/assets/images/poker.png';
         }
-        error_log(json_encode($_GET));
         $variables = array(
             'title' => 'online planning poker',
             'description' => 'online planning poker for scrum teams',
