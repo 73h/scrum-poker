@@ -57,6 +57,7 @@ class Session
      */
     public function addUser(string $name): string
     {
+        $name = preg_replace('/[\<\>]/i', '', $name);
         $users = array();
         foreach (get_object_vars($this->users) as $key => $user) {
             $users[$key] = $user->name;
