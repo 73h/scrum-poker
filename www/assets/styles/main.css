@@ -121,7 +121,7 @@ body {
 }
 
 label {
-    font-size: 1.3em;
+    font-size: 1.2em;
 }
 
 input, button, select, option {
@@ -199,6 +199,11 @@ h2 {
 
 .error {
     color: #dd0000;
+    margin: 2em 0;
+}
+
+.main-error {
+    color: var(--text-color);
     margin: 2em 0;
 }
 
@@ -325,6 +330,7 @@ h2 {
     padding: .4em .2em;
     border-bottom: dotted 1px var(--text-color);
     width: auto;
+    font-size: 1.2em;
 }
 
 .svg-templates {

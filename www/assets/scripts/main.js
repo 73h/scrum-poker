@@ -224,8 +224,6 @@ function handleButtons() {
 function setUsers() {
     pUsers.innerHTML = ""
     for (const [key, value] of Object.entries(window.session.users)) {
-        let divVoted = document.createElement("div");
-        divVoted.append(value.voted ? svgUserVoted.cloneNode(true) : svgUserNotDone.cloneNode(true));
         let divName = document.createElement("div");
         divName.innerHTML = value.name;
         if (!value.alive) {
@@ -238,12 +236,16 @@ function setUsers() {
                 divVote.classList.add(window.card_set[value.vote].complexity.toLowerCase());
                 divVote.style.paddingLeft = "3em";
                 divVote.style.textAlign = "right";
+                divVote.style.fontWeight = "bold";
                 divVote.append(window.card_set[value.vote].value);
             }
+        } else {
+            divVote.append(value.voted ? svgUserVoted.cloneNode(true) : svgUserNotDone.cloneNode(true));
+            divVote.style.paddingLeft = "3em";
+            divVote.style.textAlign = "right";
         }
         let divUser = document.createElement("div");
         divUser.classList.add("user");
-        divUser.append(divVoted);
         divUser.append(divName);
         divUser.append(divVote);
         pUsers.append(divUser);
@@ -263,15 +265,14 @@ function setUsers() {
         let average = Math.round(sum / cnt);
         let divAverage = document.createElement("div");
         divAverage.classList.add("user");
-        let divEmpty = document.createElement("div");
         let divName = document.createElement("div");
         divName.innerHTML = "average";
         let divVote = document.createElement("div");
         divVote.classList.add(window.card_set[average].complexity.toLowerCase());
         divVote.style.paddingLeft = "3em";
         divVote.style.textAlign = "right";
+        divVote.style.fontWeight = "bold";
         divVote.append(window.card_set[average].value);
-        divAverage.append(divEmpty);
         divAverage.append(divName);
         divAverage.append(divVote);
         pUsers.append(divAverage);
