@@ -13,6 +13,15 @@ class Index extends View
 
     private function render()
     {
+        if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' or $_SERVER['SERVER_PORT'] == 443) $protocol = 'https://';
+        else $protocol = 'http://';
+        $uri = $protocol . $_SERVER['SERVER_NAME'] . '/' . $_GET['session'];
+        if (isset($_GET['session'])) {
+            $image_property = 'https://chart.googleapis.com/chart?cht=qr&choe=UTF-8&chld=L|0&chs=250x250&chl=' . $uri;
+        } else {
+            $image_property = '/assets/images/poker.png';
+        }
+        error_log(json_encode($_GET));
         $variables = array(
             'title' => 'online planning poker',
             'description' => 'online planning poker for scrum teams',
@@ -20,7 +29,8 @@ class Index extends View
             'e-mail' => 'info[at]3doo.de',
             'date' => '2021-09-20',
             'keywords' => 'online, planning, poker, planning poker, online planning poker, teams, scrum',
-            'url' => 'https://' . $_SERVER['HTTP_HOST'] . '/index.html'
+            'url' => $uri,
+            'image_property' => $image_property
         );
         parent::renderHtml($variables);
     }
