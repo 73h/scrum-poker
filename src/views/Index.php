@@ -2,6 +2,8 @@
 
 namespace src\views;
 
+use src\api\Statistics;
+
 class Index extends View
 {
 
@@ -21,6 +23,7 @@ class Index extends View
         } else {
             $image_property = '/assets/images/poker.png';
         }
+        $stats = new Statistics();
         $variables = array(
             'title' => 'online planning poker',
             'description' => 'online planning poker for scrum teams',
@@ -29,7 +32,9 @@ class Index extends View
             'date' => '2021-09-20',
             'keywords' => 'online, planning, poker, planning poker, online planning poker, teams, scrum',
             'url' => $uri,
-            'image_property' => $image_property
+            'image_property' => $image_property,
+            'sessions' => $stats->getSessions(),
+            'votes' => $stats->getVotes()
         );
         parent::renderHtml($variables);
     }

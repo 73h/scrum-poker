@@ -135,6 +135,8 @@ class Poker
         $this->current_user_id = $this->session->addUser($owner);
         $this->saveUserSessionAlive();
         $this->saveSession();
+        $stats = new Statistics();
+        $stats->addSession();
     }
 
     private function getCurrentUser(): object
@@ -268,6 +270,8 @@ class Poker
         if ($this->userIsOwner()) {
             $this->session->addVote();
             $this->saveSession();
+            $stats = new Statistics();
+            $stats->addVote();
         }
     }
 
