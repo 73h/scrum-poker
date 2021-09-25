@@ -226,6 +226,10 @@ class Poker
      */
     public function enterSession(string $name, ?string $user_password = null, ?string $session_password = null): void
     {
+        if ($this->session->password !== null &&
+            !password_verify($session_password, $this->session->password)) {
+            throw new ForbiddenException('incorect session password');
+        }
         $this->current_user_id = $this->session->getUserIdFromName($name);
         if (!$this->current_user_id) {
             if ($this->session->locked) {
@@ -239,10 +243,6 @@ class Poker
             if ($this->getCurrentUser()->password !== null &&
                 !password_verify($user_password, $this->getCurrentUser()->password)) {
                 throw new ForbiddenException('incorect user password');
-            }
-            if ($this->session->password !== null &&
-                !password_verify($session_password, $this->session->password)) {
-                throw new ForbiddenException('incorect session password');
             }
         }
         $this->saveUserSessionAlive();
