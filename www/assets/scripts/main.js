@@ -262,17 +262,17 @@ function setUsers() {
                 }
             }
         });
-        let average = Math.round(sum / cnt);
+        let average = sum > 0 ? Math.round(sum / cnt) : null;
         let divAverage = document.createElement("div");
         divAverage.classList.add("user");
         let divName = document.createElement("div");
         divName.innerHTML = "average";
         let divVote = document.createElement("div");
-        divVote.classList.add(window.card_set[average].complexity.toLowerCase());
+        divVote.classList.add(average !== null ? window.card_set[average].complexity.toLowerCase() : "unknown");
         divVote.style.paddingLeft = "3em";
         divVote.style.textAlign = "right";
         divVote.style.fontWeight = "bold";
-        divVote.append(window.card_set[average].value);
+        divVote.append(average !== null ? window.card_set[average].value : "-");
         divAverage.append(divName);
         divAverage.append(divVote);
         pUsers.append(divAverage);
