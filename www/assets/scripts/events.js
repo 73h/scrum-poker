@@ -63,6 +63,8 @@ function loadEvents() {
         window.fullscreen = !window.fullscreen;
     });
 
+    btnQrcode.addEventListener("click", loadQrcode);
+
 }
 
 window.addEventListener("DOMContentLoaded", function () {
@@ -71,8 +73,9 @@ window.addEventListener("DOMContentLoaded", function () {
     divMainError.style.display = "none";
     divStartSession.style.display = "block";
     inputsSessionPassword[1].parentElement.style.display = "none";
-    loadEvents();
-    loadUsername();
-    loadSessionId();
-    loadCards();
+    loadCards(function () {
+        loadUsername();
+        loadSessionId();
+        loadEvents();
+    });
 });

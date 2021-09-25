@@ -97,7 +97,7 @@ function apiFetch(route, method, pErrorElement, success, payload = null, token =
         });
 }
 
-function loadCards() {
+function loadCards(onReady) {
     apiFetch("/api/cards", "GET", pErrorStart, function (data) {
         window.card_sets = data;
         for (const [cards_key, cards_value] of Object.entries(data)) {
@@ -110,6 +110,7 @@ function loadCards() {
             }
         }
         showCardSetDetails();
+        onReady();
     })
 }
 
@@ -123,16 +124,17 @@ function showCardSetDetails() {
 
 
 function openSession(session) {
+    window.session = session;
     divOwnerButtons.forEach(function (btn) {
         btn.style.display = "none";
     });
     divWelcome.style.display = "none";
     divSession.style.display = "block";
-    setSessionLink(session);
-    setOwnerButtons(session);
-    apiFetch("/api/cards/" + session.card_set, "GET", pErrorSession, function (data) {
+    setSessionLink();
+    setOwnerButtons();
+    apiFetch("/api/cards/" + window.session.card_set, "GET", pErrorSession, function (data) {
         window.card_set = data;
-        handleSession(session);
+        handleSession(window.session, true);
         window.setInterval(refreshSession, 2000);
     })
 
@@ -144,8 +146,8 @@ function refreshSession() {
     }, null, window.session.token);
 }
 
-function handleSession(session) {
-    if (JSON.stringify(window.session) !== JSON.stringify(session)) {
+function handleSession(session, force = false) {
+    if (force || JSON.stringify(window.session) !== JSON.stringify(session)) {
         window.session = session;
         handleButtons();
         setUserCards();
@@ -153,13 +155,17 @@ function handleSession(session) {
     }
 }
 
-function setSessionLink(session) {
-    const link = document.URL.replace(/\/$/, "").replace(/\/[a-z0-9]{6}$/, "") + "/" + session.session;
+function getSessionLink() {
+    return document.URL.replace(/\/$/, "").replace(/\/[a-z0-9]{6}$/, "") + "/" + window.session.session;
+}
+
+function setSessionLink() {
+    const link = getSessionLink();
     pSessionLink.innerHTML = '<a href="' + link + '">' + link + '</a>'
 }
 
-function setOwnerButtons(session) {
-    if (session.owner === session.user_id) {
+function setOwnerButtons() {
+    if (window.session.owner === window.session.user_id) {
         divOwnerButtons.forEach(function (btn) {
             btn.style.display = "inline";
         });
@@ -190,14 +196,16 @@ function setUserCards() {
         }
         newCard.querySelector("svg g g path.background").classList.add(card[1].complexity.toLowerCase());
         newCard.querySelector(".click").addEventListener("click", function () {
-            let diVCard = this.parentElement;
-            let payload = {"card": card[0]};
-            apiFetch("/api/sessions/" + window.session.session + "/votes/" + window.session.current_vote.key, "POST", pErrorSession, function () {
-                document.querySelectorAll(".card").forEach(function (card) {
-                    card.classList.remove("selected");
-                });
-                diVCard.classList.add("selected");
-            }, payload, window.session.token);
+            if (window.session.current_vote.uncovered === null) {
+                let diVCard = this.parentElement;
+                let payload = {"card": card[0]};
+                apiFetch("/api/sessions/" + window.session.session + "/votes/" + window.session.current_vote.key, "POST", pErrorSession, function () {
+                    document.querySelectorAll(".card").forEach(function (card) {
+                        card.classList.remove("selected");
+                    });
+                    diVCard.classList.add("selected");
+                }, payload, window.session.token);
+            }
         });
         pUserCards.append(newCard);
     });
@@ -298,4 +306,20 @@ function enterSession() {
     apiFetch("/api/sessions/" + inputSessionId.value + "/users", "POST", pErrorEnter, function (data) {
         openSession(data);
     }, payload);
+}
+
+function loadQrcode() {
+    let divModal = document.createElement("div");
+    divModal.classList.add("modal-background");
+    let img = document.createElement("img");
+    img.src = "https://chart.googleapis.com/chart?cht=qr&choe=UTF-8&chld=L|0&chs=250x250&chl=" + getSessionLink(window.session);
+    img.classList.add("modal");
+    divModal.addEventListener("click", function () {
+        this.childNodes.forEach(function (n) {
+            n.remove();
+        })
+        this.remove();
+    });
+    divModal.append(img)
+    document.body.append(divModal);
 }
