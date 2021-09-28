@@ -160,7 +160,7 @@ class Poker
             }
             $users->{$key} = (object)[
                 'name' => $user->name,
-                'alive' => (time() - $user_alive_time < 3),
+                'alive' => (time() - $user_alive_time < 9),
                 'voted' => $user_voted,
                 'vote' => $user_vote
             ];
