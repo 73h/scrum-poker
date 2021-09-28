@@ -34,7 +34,8 @@ class Index extends View
             'url' => $uri,
             'image_property' => $image_property,
             'sessions' => $stats->getSessions(),
-            'votes' => $stats->getVotes()
+            'votes' => $stats->getVotes(),
+            'assets_version' => '?v1'
         );
         parent::renderHtml($variables);
     }
