@@ -101,7 +101,7 @@ class Cards
         ];
     }
 
-    public static function school(): object
+    public static function one_to_six(): object
     {
         return (object)[
             '1' => new Card('1', Card::LOW),
@@ -124,7 +124,7 @@ class Cards
             'fibonacci_144' => self::fibonacci_144(),
             'smilies' => self::smilies(),
             'sizes' => self::sizes(),
-            'school' => self::school()
+            'one_to_six' => self::one_to_six()
         ];
     }
 
