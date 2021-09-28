@@ -207,17 +207,8 @@ h2 {
     margin: 2em 0;
 }
 
-.online, .offline {
-    width: .5em;
-    height: .5em;
-}
-
-.online {
-    background-color: green;
-}
-
-.offline {
-    background-color: #cc0000;
+#offline {
+    opacity: 0.5;
 }
 
 .unalive {

@@ -27,7 +27,6 @@ const svgCard = document.querySelector("#card");
 const svgCafe = document.querySelector("#cafe");
 const svgUserVoted = document.querySelector("#user-voted");
 const svgUserNotDone = document.querySelector("#user-not-done");
-const svgOnline = document.querySelector("#online");
 const svgOffline = document.querySelector("#offline");
 
 const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
@@ -79,7 +78,8 @@ function apiFetch(route, method, pErrorElement, success, payload = null, token =
     fetch(route, {
         headers: headers,
         method: method,
-        body: payload === null ? null : JSON.stringify(payload)
+        body: payload === null ? null : JSON.stringify(payload),
+        cache: "no-store"
     })
         .then(response => {
             if (response.status > 201) {
@@ -225,11 +225,10 @@ function setUsers() {
     pUsers.innerHTML = ""
     for (const [key, value] of Object.entries(window.session.users)) {
         let divName = document.createElement("div");
-        divName.innerHTML = value.name;
-        if (!value.alive) {
-            divName.append(" ")
-            divName.append(svgOffline.cloneNode(true));
-        }
+        divName.append(value.name + " ")
+        let offline = svgOffline.cloneNode(true);
+        if (value.alive) offline.style.visibility = "hidden";
+        divName.append(offline);
         let divVote = document.createElement("div");
         if (window.session.current_vote.uncovered !== null) {
             if (window.session.current_vote.votes !== null && value.vote !== null) {
