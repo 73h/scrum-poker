@@ -104,7 +104,7 @@ class Api extends Request
                 }
             });
 
-            // slack webhook
+            // start session from slack webhook
             $this->get('slack', function () {
                 if (isset($_GET["token"])) {
                     $slack = new Slack();
