@@ -109,8 +109,9 @@ class Api extends Request
                 if (isset($_GET["token"])) {
                     $slack = new Slack();
                     if ($slack->validateToken($_GET["token"])) {
-                        $poker = new Poker(card_set: "default");
-                        $this->sendSuccess($slack->getSlackResponse($poker));
+                        //$poker = new Poker(card_set: "default");
+                        exit("73");
+                        //$this->sendSuccess($slack->getSlackResponse($poker));
                     }
                 }
                 $this->sendForbidden(detail: "token not valid");
