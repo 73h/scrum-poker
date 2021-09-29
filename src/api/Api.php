@@ -106,12 +106,16 @@ class Api extends Request
 
             // start session from slack webhook
             $this->post('slack', function () {
-                if (isset($_GET["token"])) {
+                if (isset($_POST["token"])) {
+                    $cardset = ($_POST["text"] == "" ? "default" : $_POST["text"]);
                     $slack = new Slack();
-                    if ($slack->validateToken($_GET["token"])) {
-                        //$poker = new Poker(card_set: "default");
-                        exit("73");
-                        //$this->sendSuccess($slack->getSlackResponse($poker));
+                    if (property_exists(Cards::allCards(), $cardset)) {
+                        if ($slack->validateToken($_POST["token"])) {
+                            $poker = new Poker(card_set: $cardset);
+                            $this->sendSuccess($slack->getSlackResponse($poker));
+                        }
+                    } else {
+                        $this->sendSuccess($slack->getSlackErrorResponse());
                     }
                 }
                 $this->sendForbidden(detail: "token not valid");
