@@ -70,7 +70,12 @@ class Session
                 'token' => getRandomString(16),
                 'password' => null
             ];
-            if ($this->owner === null) $this->owner = $user_id;
+            if ($this->owner === null) {
+                $this->owner = $user_id;
+                $this->addVote();
+                $stats = new Statistics();
+                $stats->addVote();
+            }
         }
         return $user_id;
     }
