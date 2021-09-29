@@ -9,7 +9,7 @@ jobs:
       - name: Get latest code
         uses: actions/checkout@v2
       - name: Replace Slack-Webhook-Token
-        run: perl -pi -e 's/getString\(R\.string\.slack_token\)/"$ENV{SLACK_TOKEN}"/' slack-token.json
+        run: perl -pi -e 's/SLACK_TOKEN/$ENV{SLACK_TOKEN}/' slack-token.json
         env:
           TOKEN: ${{ secrets.SLACK_TOKEN }}
       - name: Sync files
