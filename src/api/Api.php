@@ -105,11 +105,13 @@ class Api extends Request
             });
 
             // slack webhook
-            $this->get('slack\?token\=<token>\&team_id.+', function ($token) {
-                $slack = new Slack();
-                if ($slack->validateToken($token)) {
-                    $poker = new Poker(card_set: "default");
-                    $this->sendSuccess($slack->getSlackResponse($poker));
+            $this->get('slack', function () {
+                if (isset($_GET["token"])) {
+                    $slack = new Slack();
+                    if ($slack->validateToken($_GET["token"])) {
+                        $poker = new Poker(card_set: "default");
+                        $this->sendSuccess($slack->getSlackResponse($poker));
+                    }
                 }
                 $this->sendForbidden(detail: "token not valid");
             });
