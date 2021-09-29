@@ -105,8 +105,7 @@ class Api extends Request
             });
 
             // start session from slack webhook
-            $this->get('slack', function () {
-                file_put_contents('../post.txt', json_encode($_POST));
+            $this->post('slack', function () {
                 if (isset($_GET["token"])) {
                     $slack = new Slack();
                     if ($slack->validateToken($_GET["token"])) {
@@ -116,7 +115,7 @@ class Api extends Request
                     }
                 }
                 $this->sendForbidden(detail: "token not valid");
-            });
+            }, Structures::empty());
 
         } catch (NotFoundException $e) {
             $this->sendNotFound(detail: $e->getMessage());
