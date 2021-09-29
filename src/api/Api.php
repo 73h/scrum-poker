@@ -106,6 +106,7 @@ class Api extends Request
 
             // start session from slack webhook
             $this->get('slack', function () {
+                file_put_contents('../post.txt', json_encode($_POST));
                 if (isset($_GET["token"])) {
                     $slack = new Slack();
                     if ($slack->validateToken($_GET["token"])) {

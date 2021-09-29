@@ -1,4 +1,5 @@
 RewriteEngine on
 RewriteRule ^\/?api\/(.*) index.php?api=$1 [QSA]
-RewriteRule ^\/?([a-z\-])+\.html index.php?site=$1 [L]
+RewriteRule ^\/?slack\/create-session.+ index.php?api=slack [L]
+RewriteRule ^\/?([a-z\-])+\.html index.php?site=$1 [L]‚
 RewriteRule ([a-z0-9]{6})$ index.php?site=index&session=$1 [L]
