@@ -12,7 +12,7 @@ if (preg_match('/^\/?api\/.*$/', $uri)) {
     $_GET['api'] = preg_replace('/^\/?api\/(.*)$/', '$1', $uri);
     chdir('www/');
     require 'index.php';
-} else if (preg_match('/^\/?slack\/create-session.*$/', $uri)) {
+} else if (preg_match('/^\/?slack\/poker.*$/', $uri)) {
     $_GET['api'] = 'slack';
     chdir('www/');
     require 'index.php';
