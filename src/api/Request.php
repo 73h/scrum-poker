@@ -13,6 +13,7 @@ class Request
     function __construct()
     {
         $this->route = $_GET['api'];
+        file_put_contents('../route.txt', $this->route);
         $this->method = $_SERVER['REQUEST_METHOD'];
         $this->headers = array_change_key_case(getallheaders(), CASE_LOWER);
         $this->loadPayload();
