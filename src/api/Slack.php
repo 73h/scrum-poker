@@ -38,12 +38,21 @@ class Slack
         ];
     }
 
-    public function getSlackErrorResponse(): object
+    public function getSlackCardSetErrorResponse(): object
     {
         $test = implode(", ", array_keys((array)Cards::allCards()));
         return (object)[
             "response_type" => "ephemeral",
             "text" => "Sorry, this card set does not exist.\r\n\r\nExisting card sets: " . $test . "\r\n\r\nExample: /poker fibonacci"
+        ];
+    }
+
+    public function getSlackErrorResponse(): object
+    {
+        $test = implode(", ", array_keys((array)Cards::allCards()));
+        return (object)[
+            "response_type" => "ephemeral",
+            "text" => "Sorry, something went wrong."
         ];
     }
 
