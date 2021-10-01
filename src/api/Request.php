@@ -22,9 +22,12 @@ class Request
     {
         $input_data = file_get_contents('php://input');
         if ($input_data != '') {
-            $this->data = json_decode($input_data, false);
-            if (json_last_error() > 0)
-                $this->sendBadRequest(detail: json_last_error_msg());
+            if (count($_POST) == 0) {
+                $this->data = json_decode($input_data, false);
+                if (json_last_error() > 0) {
+                    $this->sendBadRequest(detail: json_last_error_msg());
+                }
+            }
         }
     }
 

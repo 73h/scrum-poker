@@ -15,3 +15,10 @@ function getRandomString($length): string
     }
     return $id;
 }
+
+function getAppUri(): string
+{
+    if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' or $_SERVER['SERVER_PORT'] == 443) $protocol = 'https://';
+    else $protocol = 'http://';
+    return $protocol . $_SERVER['SERVER_NAME'];
+}

@@ -104,6 +104,23 @@ class Api extends Request
                 }
             });
 
+            // start session from slack webhook
+            $this->post('slack', function () {
+                $slack = new Slack();
+                if (isset($_POST["token"]) && isset($_POST["text"])) {
+                    $cardset = ($_POST["text"] == "" ? "default" : $_POST["text"]);
+                    if (property_exists(Cards::allCards(), $cardset)) {
+                        if ($slack->validateToken($_POST["token"])) {
+                            $poker = new Poker(card_set: $cardset);
+                            $this->sendSuccess($slack->getSlackResponse($poker));
+                        }
+                    } else {
+                        $this->sendSuccess($slack->getSlackCardSetErrorResponse());
+                    }
+                }
+                $this->sendSuccess($slack->getSlackErrorResponse());
+            }, Structures::empty());
+
         } catch (NotFoundException $e) {
             $this->sendNotFound(detail: $e->getMessage());
         } catch (ForbiddenException $e) {

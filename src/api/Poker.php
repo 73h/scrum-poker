@@ -29,7 +29,6 @@ class Poker
         }
         if ($session_id === null) {
             $this->createSession($owner, $card_set);
-            $this->startVote();
         } else {
             $this->session_id = $session_id;
             $this->loadSession();
@@ -129,11 +128,13 @@ class Poker
     /**
      * @throws Exception
      */
-    private function createSession(string $owner, ?string $card_set = null): void
+    private function createSession(?string $owner = null, ?string $card_set = null): void
     {
         $this->session = new Session(card_set: $card_set);
-        $this->current_user_id = $this->session->addUser($owner);
-        $this->saveUserSessionAlive();
+        if ($owner != null) {
+            $this->current_user_id = $this->session->addUser($owner);
+            $this->saveUserSessionAlive();
+        }
         $this->saveSession();
         $stats = new Statistics();
         $stats->addSession();
