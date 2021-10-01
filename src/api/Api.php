@@ -110,10 +110,10 @@ class Api extends Request
                 if (isset($_POST["token"]) && isset($_POST["text"])) {
                     $cardset = ($_POST["text"] == "" ? "default" : $_POST["text"]);
                     if (property_exists(Cards::allCards(), $cardset)) {
-                        //if ($slack->validateToken($_POST["token"])) {
-                        $poker = new Poker(card_set: $cardset);
-                        $this->sendSuccess($slack->getSlackResponse($poker));
-                        //}
+                        if ($slack->validateToken($_POST["token"])) {
+                            $poker = new Poker(card_set: $cardset);
+                            $this->sendSuccess($slack->getSlackResponse($poker));
+                        }
                     } else {
                         $this->sendSuccess($slack->getSlackCardSetErrorResponse());
                     }
