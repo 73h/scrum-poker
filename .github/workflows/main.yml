@@ -32,6 +32,10 @@ jobs:
     steps:
       - name: Get latest code
         uses: actions/checkout@v2
+      - name: Replace Slack-Webhook-Token
+        run: perl -pi -e 's/SLACK_TOKEN/$ENV{SLACK_TOKEN}/' slack-token.json
+        env:
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
       - name: Sync files
         uses: SamKirkland/FTP-Deploy-Action@4.1.0
         with:
