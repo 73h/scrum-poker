@@ -60,6 +60,7 @@ class View
         $stats = new Statistics();
         return array(
             'title' => 'online planning poker',
+            'subtitle' => 'for scrum teams.',
             'description' => 'online planning poker for scrum teams',
             'author' => 'Heiko Schmidt',
             'e-mail' => 'info[at]3doo.de',

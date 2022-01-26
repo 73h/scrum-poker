@@ -223,8 +223,8 @@ h2 {
     margin-left: .2em;
 }
 
-#user-cards {
-    margin-top: 0em;
+#user-cards, .manual-cards {
+    margin-top: 0;
     display: inline-flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -234,7 +234,7 @@ h2 {
     gap: 0 0;
 }
 
-#user-cards div {
+#user-cards div, .manual-cards div {
     position: relative;
     cursor: pointer;
     margin-top: 0;
@@ -246,20 +246,20 @@ h2 {
     margin-bottom: 0;
 }
 
-#user-cards span {
+#user-cards span, .manual-cards span {
     font-size: 2em;
     position: absolute;
     top: .6em;
     left: .50em;
 }
 
-#user-cards .card-svg {
+#user-cards .card-svg, .manual-cards .card-svg {
     width: 4.4em;
     height: 4.4em;
     margin: 0 -.7em;
 }
 
-#user-cards .click {
+#user-cards .click, .manual-cards .click {
     position: absolute;
     z-index: 10;
     top: 0;
@@ -268,7 +268,7 @@ h2 {
     height: 100%;
 }
 
-#user-cards .cafe-svg {
+#user-cards .cafe-svg, .manual-cards .cafe-svg {
     width: 2.4em;
     height: 2.4em;
     position: absolute;
@@ -296,7 +296,7 @@ h2 {
     color: var(--unknown);
 }
 
-#user-cards div svg g g path.border, #user-cards .cafe-svg g g path {
+#user-cards div svg g g path.border, #user-cards .cafe-svg g g path, .manual-cards div svg g g path.border, .manual-cards .cafe-svg g g path {
     color: var(--text-color) !important;
     fill: var(--text-color) !important;
 }
@@ -368,6 +368,15 @@ h2 {
 .owner {
     font-size: .5em;
     margin-left: .8em;
+}
+
+.manual-cards {
+    font-size: .5em;
+    margin-top: -1em;
+}
+
+.manual-cards * {
+    cursor: default !important;
 }
 
 @media only screen and (max-width: 900px) {

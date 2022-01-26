@@ -22,7 +22,7 @@ class Index extends View
         $variables = parent::getBaseVariables();
         $variables["url"] = $uri;
         $variables["image_property"] = $image_property;
-        $script_tags = ['scheme', 'events', 'main'];
+        $script_tags = ['main', 'poker'];
         parent::renderHtml($variables, $script_tags);
     }
 

@@ -15,7 +15,8 @@ class Manual extends View
     {
         $variables = parent::getBaseVariables();
         $variables["url"] = parent::getBaseUri();
-        $script_tags = ['scheme'];
+        $variables["subtitle"] = 'How to use the poker tool.';
+        $script_tags = ['main', 'manual'];
         parent::renderHtml($variables, $script_tags);
     }
 
