@@ -41,7 +41,7 @@ function loadEvents() {
     });
 
     btnFullscreen.addEventListener("click", function () {
-        document.querySelectorAll("header,footer,#session-link").forEach(function (element) {
+        document.querySelectorAll("header,footer,#session-link-wrapper").forEach(function (element) {
             element.style.display = window.fullscreen ? "block" : "none";
         });
         window.fullscreen = !window.fullscreen;

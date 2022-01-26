@@ -209,6 +209,7 @@ h2 {
 
 #offline {
     opacity: 0.5;
+    margin-left: .5em;
 }
 
 .unalive {
@@ -223,7 +224,7 @@ h2 {
 }
 
 #user-cards {
-    margin-top: 1em;
+    margin-top: 0em;
     display: inline-flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -319,7 +320,7 @@ h2 {
 .user div {
     display: table-cell;
     padding: .4em .2em;
-    border-bottom: dotted 1px var(--text-color);
+    border-bottom: solid 1px var(--text-color-inverted);
     width: auto;
     font-size: 1.2em;
 }
@@ -353,6 +354,20 @@ h2 {
     left: 50%;
     transform: translate(-50%, -50%);
     border: solid 1px #fff;
+}
+
+#session-link {
+    display: block;
+    margin-top: .4em;
+}
+
+.mt-2 {
+    margin-top: 2em;
+}
+
+.owner {
+    font-size: .5em;
+    margin-left: .8em;
 }
 
 @media only screen and (max-width: 900px) {

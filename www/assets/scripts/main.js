@@ -220,7 +220,13 @@ function setUsers() {
     pUsers.innerHTML = ""
     for (const [key, value] of Object.entries(window.session.users)) {
         let divName = document.createElement("div");
-        divName.append(value.name + " ")
+        divName.append(value.name)
+        if (value.user_id === window.session.owner) {
+            let spanOwner = document.createElement("span");
+            spanOwner.classList.add("owner");
+            spanOwner.append("Owner")
+            divName.append(spanOwner);
+        }
         let offline = svgOffline.cloneNode(true);
         if (value.alive) offline.style.visibility = "hidden";
         divName.append(offline);

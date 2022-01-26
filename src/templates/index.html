@@ -52,9 +52,10 @@
         </p>
     </div>
     <div class="session row" style="display:none;">
-        <p id="session-link"></p>
+        <p id="session-link-wrapper">Share this link with your players. <span id="session-link"></span></p>
         <button id="btn-uncover">
-            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 172 172">
+            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 172 172">Share this link with your
+                peers.
                 <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt"
                    stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0"
                    font-family="none" font-weight="none" font-size="none" text-anchor="none"
@@ -123,10 +124,14 @@
             </svg>
             <span>exit</span>
         </button>
-        <div>
-            <div id="user-cards"></div>
-        </div>
+        <p class="mt-2">
+            Take your vote
+        </p>
+        <div id="user-cards"></div>
         <p class="error"></p>
+        <p class="mt-2">
+            Vote results
+        </p>
         <p id="users"></p>
     </div>
 </main>
