@@ -111,7 +111,7 @@ body {
 * {
     font-family: 'Share Tech Mono', monospace;
     color: var(--text-color);
-    transition: color .5s, background .5s, fill .5s;
+    transition: color .5s, background .5s, fill .5s, border .5s;
 }
 
 .scheme-toggle {
@@ -209,6 +209,7 @@ h2 {
 
 #offline {
     opacity: 0.5;
+    margin-left: .5em;
 }
 
 .unalive {
@@ -222,8 +223,8 @@ h2 {
     margin-left: .2em;
 }
 
-#user-cards {
-    margin-top: 1em;
+#user-cards, .manual-cards {
+    margin-top: 0;
     display: inline-flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -233,7 +234,7 @@ h2 {
     gap: 0 0;
 }
 
-#user-cards div {
+#user-cards div, .manual-cards div {
     position: relative;
     cursor: pointer;
     margin-top: 0;
@@ -245,20 +246,20 @@ h2 {
     margin-bottom: 0;
 }
 
-#user-cards span {
+#user-cards span, .manual-cards span {
     font-size: 2em;
     position: absolute;
     top: .6em;
     left: .50em;
 }
 
-#user-cards .card-svg {
+#user-cards .card-svg, .manual-cards .card-svg {
     width: 4.4em;
     height: 4.4em;
     margin: 0 -.7em;
 }
 
-#user-cards .click {
+#user-cards .click, .manual-cards .click {
     position: absolute;
     z-index: 10;
     top: 0;
@@ -267,7 +268,7 @@ h2 {
     height: 100%;
 }
 
-#user-cards .cafe-svg {
+#user-cards .cafe-svg, .manual-cards .cafe-svg {
     width: 2.4em;
     height: 2.4em;
     position: absolute;
@@ -295,7 +296,7 @@ h2 {
     color: var(--unknown);
 }
 
-#user-cards div svg g g path.border, #user-cards .cafe-svg g g path {
+#user-cards div svg g g path.border, #user-cards .cafe-svg g g path, .manual-cards div svg g g path.border, .manual-cards .cafe-svg g g path {
     color: var(--text-color) !important;
     fill: var(--text-color) !important;
 }
@@ -319,7 +320,7 @@ h2 {
 .user div {
     display: table-cell;
     padding: .4em .2em;
-    border-bottom: dotted 1px var(--text-color);
+    border-bottom: solid 1px var(--text-color-inverted);
     width: auto;
     font-size: 1.2em;
 }
@@ -353,6 +354,29 @@ h2 {
     left: 50%;
     transform: translate(-50%, -50%);
     border: solid 1px #fff;
+}
+
+#session-link {
+    display: block;
+    margin-top: .4em;
+}
+
+.mt-2 {
+    margin-top: 2em;
+}
+
+.owner {
+    font-size: .5em;
+    margin-left: .8em;
+}
+
+.manual-cards {
+    font-size: .5em;
+    margin-top: -1em;
+}
+
+.manual-cards * {
+    cursor: default !important;
 }
 
 @media only screen and (max-width: 900px) {

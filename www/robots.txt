@@ -1,0 +1,3 @@
+User-Agent: *
+Disallow: /
+Sitemap: https://poker.3doo.de/sitemap.xml

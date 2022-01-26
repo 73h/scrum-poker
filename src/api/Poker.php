@@ -160,6 +160,7 @@ class Poker
                 $user_vote = $current_vote->votes->{$key}->card;
             }
             $users->{$key} = (object)[
+                'user_id' => strval($key),
                 'name' => $user->name,
                 'alive' => (time() - $user_alive_time < 10),
                 'voted' => $user_voted,
