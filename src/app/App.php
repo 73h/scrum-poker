@@ -4,6 +4,7 @@ namespace src\app;
 
 use src\api\Api;
 use src\views\Index;
+use src\views\Manual;
 
 class App
 {
@@ -18,6 +19,9 @@ class App
             switch ($site) {
                 case 'index':
                     new Index();
+                    break;
+                case 'manual':
+                    new Manual();
                     break;
                 default:
                     http_response_code(404);

@@ -8,22 +8,6 @@ function loadEvents() {
         }
     );
 
-    btnSchemeToggle.addEventListener("click", function () {
-        let theme;
-        if (prefersDarkScheme.matches) {
-            document.body.classList.toggle("light-theme");
-            theme = document.body.classList.contains("light-theme")
-                ? "light"
-                : "dark";
-        } else {
-            document.body.classList.toggle("dark-theme");
-            theme = document.body.classList.contains("dark-theme")
-                ? "dark"
-                : "light";
-        }
-        localStorage.setItem("theme", theme);
-    });
-
     selectCardSet.addEventListener("change", function () {
         localStorage.setItem("cards", this.value);
     });

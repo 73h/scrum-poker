@@ -1,4 +1,3 @@
-const btnSchemeToggle = document.querySelector(".scheme-toggle");
 const selectCardSet = document.querySelector("#card-set");
 const spanCardSetDetails = document.querySelector("#card-set-details");
 const inputsUserName = document.querySelectorAll("#member-start,#member-enter");
@@ -29,10 +28,6 @@ const svgUserVoted = document.querySelector("#user-voted");
 const svgUserNotDone = document.querySelector("#user-not-done");
 const svgOffline = document.querySelector("#offline");
 
-const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
-const currentTheme = localStorage.getItem("theme");
-if (currentTheme === "dark") document.body.classList.toggle("dark-theme");
-else if (currentTheme === "light") document.body.classList.toggle("light-theme");
 const currentCards = localStorage.getItem("cards");
 const currentUsername = localStorage.getItem("username");
 
