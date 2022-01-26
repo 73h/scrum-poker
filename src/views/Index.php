@@ -13,7 +13,7 @@ class Index extends View
 
     private function render()
     {
-        $uri = parent::getBaseUri() . $_GET['session'];
+        $uri = parent::getBaseUri() . ($_GET['session'] ?? '');
         if (isset($_GET['session'])) {
             $image_property = 'https://chart.googleapis.com/chart?cht=qr&choe=UTF-8&chld=L|0&chs=250x131&chl=' . $uri;
         } else {
