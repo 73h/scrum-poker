@@ -1,4 +1,4 @@
-# scrum-poker
+# scrum poker
 
 Online Scrum Poker
 
