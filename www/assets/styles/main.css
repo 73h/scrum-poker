@@ -16,6 +16,8 @@
     --high-light: orangered;
     --unknown-dark: steelblue;
     --unknown-light: steelblue;
+    --bkg-opacity-dark: .15;
+    --bkg-opacity-light: .25;
 }
 
 body {
@@ -30,6 +32,7 @@ body {
     --middle: var(--middle-light);
     --high: var(--high-light);
     --unknown: var(--unknown-light);
+    --bkg-opacity: var(--bkg-opacity-light);
 }
 
 body.dark-theme {
@@ -44,7 +47,9 @@ body.dark-theme {
     --middle: var(--middle-dark);
     --high: var(--high-dark);
     --unknown: var(--unknown-dark);
+    --bkg-opacity: var(--bkg-opacity-dark);
 }
+
 
 @media (prefers-color-scheme: dark) {
 
@@ -60,6 +65,7 @@ body.dark-theme {
         --middle: var(--middle-dark);
         --high: var(--high-dark);
         --unknown: var(--unknown-dark);
+        --bkg-opacity: var(--bkg-opacity-dark);
     }
 
     body.light-theme {
@@ -74,8 +80,22 @@ body.dark-theme {
         --middle: var(--middle-light);
         --high: var(--high-light);
         --unknown: var(--unknown-light);
+        --bkg-opacity: var(--bkg-opacity-light);
     }
 
+}
+
+#ukraine {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-image: url(../images/ukraine.png);
+    background-size: cover;
+    background-position: top;
+    opacity: var(--bkg-opacity);
+    pointer-events: none;
 }
 
 .icons8 svg {
@@ -205,19 +225,6 @@ main {
 
 header, footer {
     background: var(--bkg-color);
-}
-
-#ukraine {
-    height: 100%;
-    width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-image: url(../images/ukraine.png);
-    background-size: cover;
-    background-position: top;
-    opacity: .15;
-    pointer-events: none;
 }
 
 h1 {
