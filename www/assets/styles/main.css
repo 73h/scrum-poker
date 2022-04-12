@@ -268,7 +268,7 @@ h2 {
 }
 
 #user-cards div.selected {
-    margin-top: .5em;
+    margin-top: -.8em;
     margin-bottom: 0;
 }
 
@@ -349,6 +349,11 @@ h2 {
     border-bottom: solid 1px var(--text-color-inverted);
     width: auto;
     font-size: 1.2em;
+}
+
+.user img {
+    height: 1em;
+    margin: 0 .4em -.1em 0;
 }
 
 .svg-templates {
