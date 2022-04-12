@@ -165,7 +165,7 @@ class Poker
                 'alive' => (time() - $user_alive_time < 10),
                 'voted' => $user_voted,
                 'vote' => $user_vote,
-                'robo_icon' => $user->icon
+                'robo_icon' => property_exists($user, 'icon') ? $user->icon : null
             ];
         }
         return $users;

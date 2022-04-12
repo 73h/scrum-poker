@@ -191,12 +191,14 @@ function handleButtons() {
 }
 
 function setUsers() {
-    pUsers.innerHTML = ""
+    pUsers.innerHTML = "";
     for (const [key, value] of Object.entries(window.session.users)) {
-        let roboIcon = document.createElement("img");
-        roboIcon.src = '/assets/images/icons/robo-' + value.robo_icon + '.png';
         let divName = document.createElement("div");
-        divName.append(roboIcon);
+        if (value.robo_icon !== null) {
+            let roboIcon = document.createElement("img");
+            roboIcon.src = '/assets/images/icons/robo-' + value.robo_icon + '.png';
+            divName.append(roboIcon);
+        }
         divName.append(value.name);
         if (value.user_id === window.session.owner) {
             let spanOwner = document.createElement("span");
