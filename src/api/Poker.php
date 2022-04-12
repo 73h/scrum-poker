@@ -164,7 +164,8 @@ class Poker
                 'name' => $user->name,
                 'alive' => (time() - $user_alive_time < 10),
                 'voted' => $user_voted,
-                'vote' => $user_vote
+                'vote' => $user_vote,
+                'robo_icon' => $user->icon
             ];
         }
         return $users;
