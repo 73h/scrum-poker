@@ -176,10 +176,15 @@ function setUserCards() {
 }
 
 function handleButtons() {
+    btnUncover.classList.remove("click-me-notification");
     if (window.session.current_vote.uncovered !== null) {
         btnNewVote.disabled = false;
         btnUncover.disabled = true;
     } else {
+        // when all users have voted
+        if (!Object.values(window.session.users).some((element) => element.voted === false)) {
+            btnUncover.classList.add("click-me-notification");
+        }
         btnNewVote.disabled = true;
         btnUncover.disabled = false;
     }
