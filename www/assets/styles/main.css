@@ -419,8 +419,18 @@ h2 {
         margin-right: 0;
     }
 
-    button span {
+    #btn-qrcode span, #btn-fullscreen span, #btn-exit span {
         display: none;
     }
 
+}
+
+.click-me-notification {
+    animation: click-me-notification 1.5s linear 0s infinite normal none;
+}
+
+@keyframes click-me-notification {
+    50% {
+        box-shadow: 0 0 2em 1em var(--text-color);
+    }
 }
