@@ -118,14 +118,19 @@ class Cards
     public static function percents(): object
     {
         return (object)[
-            '1' => new Card('0', Card::LOW),
-            '2' => new Card('20', Card::LOW),
-            '3' => new Card('40', Card::MIDDLE),
-            '4' => new Card('60', Card::MIDDLE),
-            '5' => new Card('80', Card::HIGH),
-            '6' => new Card('100', Card::HIGH),
-            '7' => new Card('?', Card::UNKNOWN),
-            '8' => new Card('break', Card::UNKNOWN),
+            '1' => new Card('0', Card::HIGH),
+            '2' => new Card('10', Card::HIGH),
+            '3' => new Card('20', Card::HIGH),
+            '4' => new Card('30', Card::HIGH),
+            '5' => new Card('40', Card::MIDDLE),
+            '6' => new Card('50', Card::MIDDLE),
+            '7' => new Card('60', Card::MIDDLE),
+            '8' => new Card('70', Card::MIDDLE),
+            '9' => new Card('80', Card::LOW),
+            '10' => new Card('90', Card::LOW),
+            '11' => new Card('100', Card::LOW),
+            '12' => new Card('?', Card::UNKNOWN),
+            '13' => new Card('break', Card::UNKNOWN),
         ];
     }
     
