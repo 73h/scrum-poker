@@ -115,6 +115,20 @@ class Cards
         ];
     }
 
+    public static function percents(): object
+    {
+        return (object)[
+            '1' => new Card('0', Card::LOW),
+            '2' => new Card('20', Card::LOW),
+            '3' => new Card('40', Card::MIDDLE),
+            '4' => new Card('60', Card::MIDDLE),
+            '5' => new Card('80', Card::HIGH),
+            '6' => new Card('100', Card::HIGH),
+            '7' => new Card('?', Card::UNKNOWN),
+            '8' => new Card('break', Card::UNKNOWN),
+        ];
+    }
+    
     public static function allCards(): object
     {
         return (object)[
@@ -124,7 +138,8 @@ class Cards
             'fibonacci_144' => self::fibonacci_144(),
             'smilies' => self::smilies(),
             'sizes' => self::sizes(),
-            'one_to_six' => self::one_to_six()
+            'one_to_six' => self::one_to_six(),
+            'percents' => self::percents()
         ];
     }
 
