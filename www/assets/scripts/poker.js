@@ -213,10 +213,15 @@ function setUsers() {
         if (window.session.current_vote.uncovered !== null) {
             if (window.session.current_vote.votes !== null && value.vote !== null) {
                 divVote.classList.add(window.card_set[value.vote].complexity.toLowerCase());
-                divVote.style.paddingLeft = "3em";
                 divVote.style.textAlign = "right";
-                divVote.style.fontWeight = "bold";
-                divVote.append(window.card_set[value.vote].value);
+                divVote.style.paddingLeft = "3em";
+                if (window.card_set[value.vote].value === "break") {
+                    let newCafe = svgCafe.cloneNode(true);
+                    divVote.append(newCafe);
+                } else {
+                    divVote.style.fontWeight = "bold";
+                    divVote.append(window.card_set[value.vote].value);
+                }
             }
         } else {
             divVote.append(value.voted ? svgUserVoted.cloneNode(true) : svgUserNotDone.cloneNode(true));
