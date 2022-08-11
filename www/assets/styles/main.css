@@ -327,6 +327,17 @@ h2 {
     fill: var(--text-color) !important;
 }
 
+.user .cafe-svg g g path {
+    color: var(--unknown) !important;
+    fill: var(--unknown) !important;
+}
+
+#users .cafe-svg {
+    width: 1.3em;
+    height: 1.3em;
+    margin-right: -0.15em;
+}
+
 #users svg {
     width: 1.2em;
     height: 1.2em;
