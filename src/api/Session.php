@@ -68,7 +68,7 @@ class Session
             $this->users->{$user_id} = (object)[
                 'name' => $name,
                 'token' => getRandomString(16),
-                'icon' => random_int(0, 22),
+                'icon' => random_int(0, 32),
                 'password' => null
             ];
             if ($this->owner === null) {
