@@ -153,7 +153,7 @@ class Poker
         $users = (object)[];
         $current_vote = $this->session->getCurrentVote();
         foreach (get_object_vars($this->session->users) as $key => $user) {
-            $user_alive_time = file_get_contents($this->getUserSessionAlivePath($key));
+            $user_alive_time = filemtime($this->getUserSessionAlivePath($key));
             $user_voted = property_exists($current_vote->votes, $key);
             $user_vote = null;
             if (property_exists($current_vote->votes, $key) && ($current_vote->uncovered || $key == $this->current_user_id)) {
