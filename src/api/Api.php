@@ -72,6 +72,9 @@ class Api extends Request
                     if (property_exists($data, 'password')) {
                         $poker->setSessionPassword($data->password);
                         $message[] = 'session password changed';
+                    } elseif (property_exists($data, 'new_owner_user_id')) {
+                        $poker->changeOwner($data->new_owner_user_id);
+                        $message[] = 'session owner changed';
                     }
                     $this->sendOk(implode(', ', $message));
                 } else {

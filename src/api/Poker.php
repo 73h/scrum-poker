@@ -361,4 +361,22 @@ class Poker
         ];
     }
 
+    /**
+     * @throws ForbiddenException
+     * @throws NotFoundException
+     * @throws Exception
+     */
+    public function changeOwner(string $user_id): void
+    {
+        if ($this->userIsOwner()) {
+            if (!property_exists($this->session->users, $user_id)) {
+                throw new NotFoundException('user not found');
+            }
+            if ($this->current_user_id !== $user_id) {
+                $this->session->owner = $user_id;
+            }
+            $this->saveSession();
+        }
+    }
+
 }
