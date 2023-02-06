@@ -89,13 +89,10 @@ function showCardSetDetails() {
 
 function openSession(session) {
     window.session = session;
-    divOwnerButtons.forEach(function (btn) {
-        btn.style.display = "none";
-    });
     divWelcome.style.display = "none";
     divSession.style.display = "block";
     setSessionLink();
-    setOwnerButtons();
+    handleOwnerButtons();
     apiFetch("/api/cards/" + window.session.card_set, "GET", pErrorSession, function (data) {
         window.card_set = data;
         handleSession(window.session, true);
@@ -113,6 +110,7 @@ function refreshSession() {
 function handleSession(session, force = false) {
     if (force || JSON.stringify(window.session) !== JSON.stringify(session)) {
         window.session = session;
+        handleOwnerButtons();
         handleButtons();
         setUserCards();
         setUsers();
@@ -128,7 +126,10 @@ function setSessionLink() {
     pSessionLink.innerHTML = '<a href="' + link + '">' + link + '</a>'
 }
 
-function setOwnerButtons() {
+function handleOwnerButtons() {
+    divOwnerButtons.forEach(function (btn) {
+        btn.style.display = "none";
+    });
     if (window.session.owner === window.session.user_id) {
         divOwnerButtons.forEach(function (btn) {
             btn.style.display = "inline";
@@ -205,7 +206,9 @@ function setUsers() {
             spanOwner.classList.add("owner");
             spanOwner.append("Owner");
             divName.append(spanOwner);
-        }
+        } else divName.addEventListener("click", function () {
+            changeOwner(key, value.name);
+        });
         let offline = svgOffline.cloneNode(true);
         if (value.alive) offline.style.visibility = "hidden";
         divName.append(offline);
@@ -260,6 +263,17 @@ function setUsers() {
         divAverage.append(divName);
         divAverage.append(divVote);
         pUsers.append(divAverage);
+    }
+}
+
+function changeOwner(user_id, user_name) {
+    if (window.session.owner === window.session.user_id) {
+        if (confirm("Do you want to define " + user_name + " as owner?")) {
+            let payload = {"new_owner_user_id": user_id};
+            apiFetch("/api/sessions/" + window.session.session, "PUT", pErrorSession, function () {
+                refreshSession();
+            }, payload, window.session.token);
+        }
     }
 }
 
