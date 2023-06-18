@@ -26,7 +26,7 @@ class View
 
     private function getAssetsVersion(): string
     {
-        return '?v8';
+        return '?v9';
     }
 
     private function getJavaScriptTag(string $file): string
