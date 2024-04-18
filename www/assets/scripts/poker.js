@@ -311,7 +311,7 @@ function loadQrcode() {
     let divModal = document.createElement("div");
     divModal.classList.add("modal-background");
     let img = document.createElement("img");
-    img.src = "https://chart.googleapis.com/chart?cht=qr&choe=UTF-8&chld=L|0&chs=250x250&chl=" + getSessionLink(window.session);
+    img.src = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" + getSessionLink(window.session);
     img.classList.add("modal");
     divModal.addEventListener("click", function () {
         this.childNodes.forEach(function (n) {
