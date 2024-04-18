@@ -31,7 +31,7 @@ class Slack
             "response_type" => "in_channel",
             "text" => "have fun playing poker >> " . $uri,
             "attachments" => [
-                (object)["image_url" => "https://chart.googleapis.com/chart?cht=qr&choe=UTF-8&chld=L|0&chs=250x250&chl=" . $uri]
+                (object)["image_url" => "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" . $uri]
             ],
             "unfurl_media" => true,
             "unfurl_links" => true

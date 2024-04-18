@@ -15,7 +15,7 @@ class Index extends View
     {
         $uri = parent::getBaseUri() . ($_GET['session'] ?? '');
         if (isset($_GET['session'])) {
-            $image_property = 'https://chart.googleapis.com/chart?cht=qr&choe=UTF-8&chld=L|0&chs=250x131&chl=' . $uri;
+            $image_property = 'https://api.qrserver.com/v1/create-qr-code/?size=250x131&data=' . $uri;
         } else {
             $image_property = '/assets/images/poker.png';
         }
