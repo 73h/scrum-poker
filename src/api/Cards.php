@@ -101,6 +101,18 @@ class Cards
         ];
     }
 
+    public static function smlxl(): object
+    {
+        return (object)[
+            '1' => new Card('S', Card::LOW),
+            '2' => new Card('M', Card::MIDDLE),
+            '3' => new Card('L', Card::MIDDLE),
+            '4' => new Card('XL', Card::HIGH),
+            '5' => new Card('?', Card::UNKNOWN),
+            '6' => new Card('break', Card::UNKNOWN),
+        ];
+    }
+
     public static function one_to_six(): object
     {
         return (object)[
@@ -142,6 +154,7 @@ class Cards
             'fibonacci' => self::fibonacci(),
             'fibonacci_144' => self::fibonacci_144(),
             'smilies' => self::smilies(),
+            'smlxl' => self::smlxl(),
             'sizes' => self::sizes(),
             'one_to_six' => self::one_to_six(),
             'percents' => self::percents()
